@@ -20,7 +20,7 @@ main =
         writeFile "testCode.txt" code
 
 instructions :: [Instruction]
-instructions = let (instr, (_, env)) = runState (test env) (1, []) in instr
+instructions = let (instr, (_, env)) = runState (test env) (0, []) in instr
 
 test :: Env -> Code
 test env = annotate "test" $ combine
