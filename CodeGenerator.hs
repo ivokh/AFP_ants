@@ -34,11 +34,16 @@ data AntState = Jump String -- Jumps to a function
     deriving Eq
 
 data MoveDir = L | R
-    deriving Show
 
-type Code = State (Int, [(AntState, Int)]) [Instruction]
+instance Show MoveDir where
+    show L = "Left"
+    show R = "Right"
 
--- | We can use combine to combine functions, i.e. concatenate code
+type Env = [(AntState, Int)]
+
+type Code = State (Int, Env) [Instruction]
+
+-- | We can use combine to combine functions, i.env. concatenate code
 class Combine a where
     combine :: Code -> a
     
@@ -53,13 +58,13 @@ next :: AntState
 next = Relative 1
     
 -- | Looks up an AntState in the environment
-lookup' :: AntState -> State (Int, [(AntState, Int)]) Int
-lookup' st = 
+lookup' :: Env -> AntState -> State (Int, [(AntState, Int)]) Int
+lookup' env st = 
     do
-        (index, table) <- get
+        (index, _) <- get
         case st of
-            Relative n -> return (index - n)
-            _           -> return (fromJust $ lookup st table)
+            Relative n -> return (index + n)
+            _           -> return (fromJust $ lookup st env)
 
 -- | Lifts instructions to code and also updates the index
 return' :: Instruction -> Code
@@ -73,67 +78,67 @@ return' instr =
 annotate :: String -> Code -> Code
 annotate s code =
     do
-        instr <- code
         (index, table) <- get
         put (index, (Jump s, index):table)
+        instr <- code
         return instr
 
--- Go to Code st1 if cond holds in sensedir; and to Code st2 otherwise.
-sense :: SenseDir -> AntState -> AntState -> Condition -> Code
-sense sensedir st1 st2 cond = 
+-- | Go to Code st1 if cond holds in sensedir; and to Code st2 otherwise.
+sense :: Env -> SenseDir -> AntState -> AntState -> Condition -> Code
+sense env sensedir st1 st2 cond = 
     do
-        st1' <- lookup' st1
-        st2' <- lookup' st2
+        st1' <- lookup' env st1
+        st2' <- lookup' env st2
         return' $ Sense sensedir st1' st2' cond
 
--- Set mark i in current cell and go to st.
-mark :: Marker -> AntState -> Code
-mark n st = 
+-- | Set mark i in current cell and go to st.
+mark :: Env -> Marker -> AntState -> Code
+mark env n st = 
     do
-        st' <- lookup' st
+        st' <- lookup' env st
         return' $ Mark n st'
 
--- Clear mark i in current cell and go to st.
-unMark :: Marker -> AntState -> Code
-unMark n st = 
+-- | Clear mark i in current cell and go to st.
+unMark :: Env -> Marker -> AntState -> Code
+unMark env n st = 
     do
-        st' <- lookup' st
+        st' <- lookup' env st
         return' $ Unmark n st'
 
--- Pick up food from current cell and go to st1 ; go to st2 if there is no food in the current cell.
-pickUp :: AntState -> AntState -> Code
-pickUp st1 st2 = 
+-- | Pick up food from current cell and go to st1 ; go to st2 if there is no food in the current cell.
+pickUp :: Env -> AntState -> AntState -> Code
+pickUp env st1 st2 = 
     do
-        st1' <- lookup' st1
-        st2' <- lookup' st2
+        st1' <- lookup' env st1
+        st2' <- lookup' env st2
         return' $ PickUp st1' st2'
 
--- Drop food in current cell and go to st.
-dropFood :: AntState -> Code
-dropFood st = 
+-- | Drop food in current cell and go to st.
+dropFood :: Env -> AntState -> Code
+dropFood env st = 
     do
-        st' <- lookup' st
+        st' <- lookup' env st
         return' $ Drop st'
 
--- Turn left or right and go to st.
-turn :: MoveDir -> AntState -> Code
-turn dir st =  
+-- | Turn left or right and go to st.
+turn :: Env -> MoveDir -> AntState -> Code
+turn env dir st =  
     do
-        st' <- lookup' st
+        st' <- lookup' env st
         return' $ Turn dir st'
 
--- Move forward and go to st1 ; go to st2 if the cell ahead is blocked.
-move :: AntState -> AntState -> Code
-move st1 st2 = 
+-- | Move forward and go to st1 ; go to st2 if the cell ahead is blocked.
+move :: Env -> AntState -> AntState -> Code
+move env st1 st2 = 
     do
-        st1' <- lookup' st1
-        st2' <- lookup' st2
+        st1' <- lookup' env st1
+        st2' <- lookup' env st2
         return' $ Move st1' st2'
 
--- Choose a random number x from 0 to p-1 ; go to st1 if x=0 and st2 otherwise.
-toss :: Int -> AntState -> AntState -> Code
-toss n st1 st2 = 
+-- | Choose a random number x from 0 to p-1 ; go to st1 if x=0 and st2 otherwise.
+toss :: Env -> Int -> AntState -> AntState -> Code
+toss env n st1 st2 = 
     do
-        st1' <- lookup' st1
-        st2' <- lookup' st2
+        st1' <- lookup' env st1
+        st2' <- lookup' env st2
         return' $ Flip n st1' st2'
