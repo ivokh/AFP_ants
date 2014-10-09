@@ -1,5 +1,6 @@
 {-#LANGUAGE TypeSynonymInstances, FlexibleInstances#-}
-module CodeGenerator where
+module CodeGenerator (Instruction(..), Condition(..), SenseDir(..), AntState(..), MoveDir(..), Code, 
+    combine, runCode, next, annotate, sense, mark, unMark, pickUp, dropFood, turn, move, toss) where
 
 import Data.Maybe
 import Control.Applicative
