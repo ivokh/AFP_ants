@@ -1,6 +1,6 @@
-{-#LANGUAGE TypeSynonymInstances, FlexibleInstances#-}
-module CodeGenerator (Instruction(..), Condition(..), SenseDir(..), AntState(..), MoveDir(..), Code, 
-    combine, runCode, next, annotate, sense, mark, unMark, pickUp, dropFood, turn, move, toss) where
+{-#LANGUAGE TypeSynonymInstances, FlexibleInstances, ExistentialQuantification#-}
+module CodeGenerator (Instruction(..), Condition(..), SenseDir(..), AntState, MoveDir(..), Code, 
+    combine, runCode, next, annotate, sense, mark, unMark, pickUp, dropFood, turn, move, toss, call, jump, relative, mkParam, define) where
 
 import Data.Maybe
 import Control.Applicative
@@ -23,7 +23,6 @@ data Instruction
 data Condition = Friend | Foe | FriendWithFood | FoeWithFood | Food | Rock | Marker Marker | FoeMarker | Home | FoeHome 
    deriving Show
    
-
 data SenseDir =
     Here
     | Ahead
@@ -31,17 +30,35 @@ data SenseDir =
     | RightAhead
     deriving Show
 
-data AntState = Jump String -- Jumps to a function
+data AntState = Call Function -- Calls a function
                 | Relative Int -- Relative n increases the state pointer by n steps
     deriving Eq
-
+    
+data Function = Function String [Param]
+    deriving (Eq, Show)
+    
+-- | Data type for parameters
+data Param = ParamInt Int | ParamString String
+    deriving (Eq, Show)
+    
+-- | A class for things that can be used as parameter
+class Paramable a where
+    mkParam :: a -> Param
+    
+instance Paramable Int where
+    mkParam = ParamInt
+    
+instance Paramable String where
+    mkParam = ParamString
+    
 data MoveDir = L | R
 
 instance Show MoveDir where
     show L = "Left"
     show R = "Right"
 
-type Env = [(AntState, Int)]
+-- | The environement, containing function calls tupled with the row number where they are defined
+type Env = [(Function, Int)]
 
 type Code' a = ReaderT Env (State (Int, Env)) a
 
@@ -58,6 +75,18 @@ instance Combine Code where
 instance Combine a => Combine (Code -> a) where
     combine c1 c2 = combine $ (++) <$> c1 <*> c2
     
+-- | Calls a function with parameters
+call :: String -> [Param] -> AntState
+call s args = Call (Function s args)
+
+-- | Jumps to a function that doesn't have parameters
+jump :: String -> AntState
+jump s = Call (Function s [])
+
+-- | relative n moves n rows downwards in the list of instructions
+relative :: Int -> AntState
+relative = Relative
+   
 runCode :: Code -> [Instruction]
 runCode c = let (instr, (_, env)) = runState (runReaderT c env) (0, []) in instr
 
@@ -73,7 +102,9 @@ lookup' st =
         env <- ask
         case st of
             Relative n -> return (index + n)
-            _          -> return (fromJust $ lookup st env)
+            Call f     -> return (fromJust' $ lookup f env)
+                where fromJust' (Just x) = x
+                      fromJust' Nothing = error ("\r\nCould not find: \r\n" ++ show f ++ "\r\nin the environment!")
 
 -- | Lifts instructions to code and also updates the index
 return' :: Instruction -> Code
@@ -83,12 +114,21 @@ return' instr = ReaderT $ \r ->
         put (index + 1, table)
         return [instr]
 
--- | Labels a function
+-- | Labels a function without parameters
 annotate :: String -> Code -> Code
 annotate s code = 
     do
         (index, table) <- get
-        put (index, (Jump s, index):table)
+        put (index, (Function s [], index):table)
+        instr <- code
+        return instr
+
+-- | Labels a function with parameters
+define :: String -> [Param] -> Code -> Code
+define s args code = 
+    do
+        (index, table) <- get
+        put (index, (Function s args, index):table)
         instr <- code
         return instr
 
