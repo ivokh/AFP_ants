@@ -14,27 +14,39 @@ under "A Brief Look at the State Machine"
 
 main = 
     do
-        let code = unlines $ map show (runCode searchFood)
+        let code = unlines $ map show (runCode searchFood')
         writeFile "testAnt.ant" code
+
+searchFood' :: Code
+searchFood' = annotate "searchFood'" $ combine
+        (testEnemyHome "initBlockEnemyHome" "searchFood")
+        initBlockEnemyHome
+        searchFood
 
 searchFood :: Code
 searchFood = annotate "searchFood" $ combine
-        (sense Ahead next (call "randomMoveL" [(mkParam "searchFood")]) Food)
-        (move (jump "pickup") (jump "searchFood")) 
+        (sense Here next (call "randomMoveL" [(mkParam "searchFood'")]) Food)
         pickup
-        (randomMoveL "searchFood")
-        searchHome
+        (randomMoveL "searchFood'")
+        searchHome'
 
 pickup :: Code
-pickup = annotate "pickup"
+pickup = annotate "pickup" $ combine
+        (sense Here (call "randomMoveL" [(mkParam "searchFood'")]) next Home)
         (pickUp (jump "searchHome") (jump "searchFood"))
+
+searchHome' :: Code
+searchHome' = annotate "searchHome'" $ combine
+        (testEnemyHome "initBlockEnemyHome" "searchHome")
+--        initBlockEnemyHome
+        searchHome
         
 searchHome :: Code
 searchHome = annotate "searchHome" $ combine
-        (sense Ahead next (call "randomMoveL" [(mkParam "searchHome")]) Home)
-        (move (jump "drop") (jump "searchHome")) 
+        (sense Here next (call "randomMoveL" [(mkParam "searchHome'")]) Home)
+        --(move (jump "drop") (jump "searchHome'")) 
         doDrop
-        (randomMoveL "searchHome")
+        (randomMoveL "searchHome'")
 
 doDrop :: Code
 doDrop = annotate "drop"
@@ -56,3 +68,18 @@ moveForward :: String -> Code
 moveForward n = define "moveForward" [(mkParam n)] $ 
         (move (jump n) (call "randomMoveL" [(mkParam n)]))
     
+testEnemyHome :: String -> String -> Code
+testEnemyHome t f = define "testEnemyHome" [(mkParam t), (mkParam f)] $
+        (sense Here (jump t) (jump f) FoeHome)
+
+initBlockEnemyHome :: Code
+initBlockEnemyHome = annotate "initBlockEnemyHome" $ combine
+        (turn R next)
+        (sense Ahead (jump "initBlockEnemyHome") (jump "blockEnemyHome") FoeHome)
+        blockEnemyHome
+
+blockEnemyHome :: Code
+blockEnemyHome = annotate "blockEnemyHome" $ combine
+        (sense Ahead next (relative 2) FoeHome)
+        (move (jump "blockEnemyHome") (jump "blockEnemyHome"))
+        (turn L (jump "blockEnemyHome"))
