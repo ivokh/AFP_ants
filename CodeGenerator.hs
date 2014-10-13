@@ -1,4 +1,4 @@
-{-#LANGUAGE TypeSynonymInstances, FlexibleInstances, ExistentialQuantification#-}
+{-#LANGUAGE TypeSynonymInstances, FlexibleInstances, ExistentialQuantification, OverlappingInstances, MultiParamTypeClasses#-}
 module CodeGenerator (Instruction(..), Condition(..), SenseDir(..), AntState, MoveDir(..), Code, 
     combine, runCode, next, annotate, sense, mark, unMark, pickUp, dropFood, turn, move, toss, call, jump, relative, mkParam, define) where
 
@@ -32,24 +32,31 @@ data SenseDir =
 
 data AntState = Call Function -- Calls a function
                 | Relative Int -- Relative n increases the state pointer by n steps
-    deriving Eq
+    deriving (Show, Eq)
     
 data Function = Function String [Param]
-    deriving (Eq, Show)
+    deriving (Show, Eq)
     
 -- | Data type for parameters
-data Param = ParamInt Int | ParamString String
-    deriving (Eq, Show)
+data Param = forall a . (Eq a, Show a) => Param a
     
--- | A class for things that can be used as parameter
-class Paramable a where
-    mkParam :: a -> Param
+instance Show Param where
+    show (Param x) = show x
     
-instance Paramable Int where
-    mkParam = ParamInt
+instance Eq Param where
+    Param x == Param y = eq x y
     
-instance Paramable String where
-    mkParam = ParamString
+class Eq' a b where
+    eq :: a -> b -> Bool
+    
+instance Eq a => Eq' a a where
+    eq = (==)
+    
+instance Eq' a b where
+    eq = const (const False)
+    
+mkParam :: (Eq a, Show a) => a -> Param
+mkParam = Param
     
 data MoveDir = L | R
 
