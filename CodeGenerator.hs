@@ -18,17 +18,24 @@ data Instruction
    | Turn MoveDir Int
    | Move Int Int
    | Flip Int Int Int
- deriving Show
+ deriving (Show, Eq)
  
 data Condition = Friend | Foe | FriendWithFood | FoeWithFood | Food | Rock | Marker Marker | FoeMarker | Home | FoeHome 
-   deriving Show
+   deriving (Show, Eq)
    
 data SenseDir =
     Here
     | Ahead
     | LeftAhead
     | RightAhead
-    deriving Show
+    deriving (Show, Eq)
+    
+data MoveDir = L | R
+    deriving Eq
+
+instance Show MoveDir where
+    show L = "Left"
+    show R = "Right"
 
 data AntState = Call Function -- Calls a function
                 | Relative Int -- Relative n increases the state pointer by n steps
@@ -57,12 +64,6 @@ instance Eq' a b where
     
 mkParam :: (Eq a, Show a) => a -> Param
 mkParam = Param
-    
-data MoveDir = L | R
-
-instance Show MoveDir where
-    show L = "Left"
-    show R = "Right"
 
 -- | The environement, containing function calls tupled with the row number where they are defined
 type Env = [(Function, Int)]

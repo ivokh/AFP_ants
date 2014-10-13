@@ -6,8 +6,6 @@ import Control.Monad
 import Control.Monad.State
 
 
-
-
 {-
 #############################################
 Some (possibly useless) funtions for testing:
