@@ -1,6 +1,6 @@
-{-#LANGUAGE TypeSynonymInstances, FlexibleInstances, ExistentialQuantification, OverlappingInstances, MultiParamTypeClasses#-}
+{-#LANGUAGE TypeSynonymInstances, FlexibleInstances, ExistentialQuantification#-}
 module CodeGenerator (Instruction(..), Condition(..), SenseDir(..), AntState, MoveDir(..), Code, 
-    combine, runCode, next, annotate, sense, mark, unMark, pickUp, dropFood, turn, move, toss, call, jump, relative, mkParam, define) where
+    combine, combineList, runCode, next, this, annotate, define, addLabel, sense, mark, unMark, pickUp, dropFood, turn, move, toss, call, jump, relative, mkParam) where
 
 import Data.Maybe
 import Control.Applicative
@@ -51,16 +51,7 @@ instance Show Param where
     show (Param x) = show x
     
 instance Eq Param where
-    Param x == Param y = eq x y
-    
-class Eq' a b where
-    eq :: a -> b -> Bool
-    
-instance Eq a => Eq' a a where
-    eq = (==)
-    
-instance Eq' a b where
-    eq = const (const False)
+    Param x == Param y = show x == show y
     
 mkParam :: (Eq a, Show a) => a -> Param
 mkParam = Param
@@ -83,6 +74,10 @@ instance Combine Code where
 instance Combine a => Combine (Code -> a) where
     combine c1 c2 = combine $ (++) <$> c1 <*> c2
     
+-- | A function for combining code stored in a list
+combineList :: [Code] -> Code
+combineList = foldr combine (return [])
+    
 -- | Calls a function with parameters
 call :: String -> [Param] -> AntState
 call s args = Call (Function s args)
@@ -101,6 +96,10 @@ runCode c = let (instr, (_, env)) = runState (runReaderT c env) (0, []) in instr
 -- | Represents the next Instruction
 next :: AntState
 next = Relative 1
+
+-- | Represents this Instruction
+this :: AntState
+this = Relative 0
     
 -- | Looks up an AntState in the environment
 lookup' :: AntState -> Code' Int
@@ -139,6 +138,15 @@ define s args code =
         put (index, (Function s args, index):table)
         instr <- code
         return instr
+
+-- | Adds an additional label to a given antstate
+addLabel :: String -> [Param] -> AntState -> Code
+addLabel name args st =
+    do
+        loc <- lookup' st
+        (index, table) <- get
+        put (index, (Function name args, loc) : table)
+        return []
 
 -- | Go to Code st1 if cond holds in sensedir; and to Code st2 otherwise.
 sense :: SenseDir -> AntState -> AntState -> Condition -> Code
