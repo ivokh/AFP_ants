@@ -19,13 +19,16 @@ main =
 
 searchFood' :: Code
 searchFood' = annotate "searchFood'" $ combine
+        (toss 1 (jump "track1") next)
         (testEnemyHome "initBlockEnemyHome" "searchFood")
         initBlockEnemyHome
         searchFood
+        track1
 
 searchFood :: Code
 searchFood = annotate "searchFood" $ combine
-        (sense Here next (call "randomMoveL" [(mkParam "searchFood'")]) Food)
+        (sense Ahead next (call "randomMoveL" [(mkParam "searchFood'")]) Food)
+        (move (jump "pickup") (jump "searchFood"))
         pickup
         (randomMoveL "searchFood'")
         searchHome'
@@ -43,8 +46,8 @@ searchHome' = annotate "searchHome'" $ combine
         
 searchHome :: Code
 searchHome = annotate "searchHome" $ combine
-        (sense Here next (call "randomMoveL" [(mkParam "searchHome'")]) Home)
-        --(move (jump "drop") (jump "searchHome'")) 
+        (sense Ahead next (call "randomMoveL" [(mkParam "searchHome'")]) Home)
+        (move (jump "drop") (jump "searchHome")) 
         doDrop
         (randomMoveL "searchHome'")
 
@@ -83,3 +86,97 @@ blockEnemyHome = annotate "blockEnemyHome" $ combine
         (sense Ahead next (relative 2) FoeHome)
         (move (jump "blockEnemyHome") (jump "blockEnemyHome"))
         (turn L (jump "blockEnemyHome"))
+
+track1 :: Code
+track1 = annotate "track1" $
+        moveAndTest 100
+        
+moveAndTest :: Int -> Code
+moveAndTest 1  = moveAndTestTerm 100
+moveAndTest 30 = moveAndTest' 30 nextMove nextReturn
+        where
+            nextMove succes error   = (turn L succes)
+            nextReturn succes error = (turn R succes)
+moveAndTest 68 = moveAndTest' 68 nextMove nextReturn
+        where
+            nextMove succes error   = (turn L succes)
+            nextReturn succes error = (turn R succes)
+moveAndTest n  = moveAndTest' n nextMove nextReturn
+        where
+            nextMove succes error   = (move succes error)
+            nextReturn succes error = (move succes error)
+
+moveAndTest' n nextMove nextReturn = define "moveAndTest" [mkParam (n::Int)] $ combine
+        (sense Here next (call "moveNext" [mkParam (n::Int)]) Food)
+        (sense Here (call "moveNext" [mkParam (n::Int)]) next Home)
+        -- found food
+        (pickUp 
+            (call "moveBack" [mkParam "returnTest", mkParam (n::Int)])
+            (call "moveBack" [mkParam "returnTest", mkParam (n::Int)])
+        )
+        (moveBack "returnTest" n)
+        (moveBack "moveAndTest" n)
+        -- end found food
+        (define "moveNext" [mkParam (n::Int)] 
+            (let
+                succes = (call "moveAndTest" [mkParam ((n::Int) - 1)]) 
+                error  = (call "moveBack" [mkParam "returnTest", mkParam (n::Int)])
+            in nextMove succes error)
+        )
+        -- return path
+        (define "returnTest" [mkParam ((n::Int) - 1)] 
+            (sense Here next (call "returnPath" [mkParam ((n::Int) - 1)]) Home)
+        )
+        -- found home
+        (dropFood
+            (call "moveBack" [mkParam "moveAndTest", mkParam ((n::Int) - 1)])
+        )
+        (define "returnPath" [mkParam ((n::Int) - 1)] 
+            (let
+                succes = (call "returnTest" [mkParam (n::Int)]) 
+                error  = (call "moveBack" [mkParam "moveAndTest", mkParam ((n::Int) - 1)])
+            in nextReturn succes error)
+        )
+        (moveAndTest (n - 1))
+
+moveAndTestTerm n = define "moveAndTest" [mkParam (1::Int)] $ combine
+        (sense Ahead
+            (call "moveBack" [mkParam "returnTest", mkParam (1::Int)])
+            (call "moveBack" [mkParam "returnTest", mkParam (1::Int)])
+        Food)
+        -- return path
+        (define "returnTest" [mkParam (1::Int)] 
+            (move
+                (call "returnTest" [mkParam (2::Int)]) 
+                (call "moveBack" [mkParam "moveAndTest", mkParam (2::Int)])
+            )
+        )
+        (define "returnTest" [mkParam (n::Int)] 
+            (sense Here 
+                next
+                (call "moveBack" [mkParam "moveAndTest", mkParam (n::Int)])
+            Home)
+        )
+        (dropFood
+            (call "moveBack" [mkParam "moveAndTest", mkParam (n::Int)])
+        )
+        (define "moveAndTest" [mkParam ((n::Int) + 1)]
+            (sense Here 
+                (call "moveBack" [mkParam "returnTest", mkParam (n::Int)])
+                (call "moveBack" [mkParam "returnTest", mkParam (n::Int)])
+            Home)
+        )
+        (moveBack "returnTest" 1)
+        (moveBack "moveAndTest" 1)
+        (moveBack "moveAndTest" n)
+        (moveBack "moveAndTest" (n + 1))
+
+moveBack :: String -> Int -> Code
+moveBack r a = define "moveBack" [mkParam r, mkParam (a::Int)] $ combine
+        (turn R next)
+        (turn R next)
+        (turn R (call r [mkParam (a::Int)]))
+        
+--tries to move n times
+move' :: Int -> Code
+move' n = if n == 1 then move next next else combine (move next next) (define "move" [mkParam (n - 1)] $ move' (n - 1))
