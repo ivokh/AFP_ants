@@ -22,7 +22,7 @@ data Instruction
  
 data Condition = Friend | Foe | FriendWithFood | FoeWithFood | Food | Rock | Marker Marker | FoeMarker | Home | FoeHome 
    deriving (Show, Eq)
-   
+
 data SenseDir =
     Here
     | Ahead

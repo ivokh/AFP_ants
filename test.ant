@@ -1,0 +1,26 @@
+Sense Ahead 5 1 Home
+Sense LeftAhead 5 2 Home
+Sense RightAhead 5 3 Home
+Mark 0 4
+Move 4 4
+PickUp 6 6
+PickUp 7 7
+PickUp 8 8
+PickUp 9 9
+Sense Ahead 10 11 Marker 0
+Mark 0 25
+Sense Ahead 16 12 Home
+Sense RightAhead 13 14 Marker 0
+Move 25 14
+Sense LeftAhead 15 23 Marker 0
+Move 25 16
+PickUp 17 17
+PickUp 18 18
+PickUp 19 19
+Sense RightAhead 20 21 Marker 0
+Move 25 21
+Sense LeftAhead 22 23 Marker 0
+Move 25 23
+Move 23 24
+Turn Left 23
+PickUp 25 25
