@@ -26,6 +26,7 @@ data Condition = Friend | Foe | FriendWithFood | FoeWithFood | Food | Rock | Mar
 instance Show Condition where
     show (Marker i) = "Marker " ++ (show i)
     show Friend = "Friend"
+    show Foe = "Foe"
     show FriendWithFood = "FriendWithFood"
     show FoeWithFood = "FoeWithFood"
     show Food = "Food"
