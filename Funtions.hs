@@ -48,9 +48,9 @@ searchFood facing dest = define "searchFood" [mkParam facing, mkParam dest] $ co
     --If food or path wasn't found, move and leave a mark that leads to home
     (move next (relative 5))
     --Only leave a marker if there is no path marker already
-    sense Here (call "searchFood" [mkParam dest, mkParam dest]) next (Marker 1)
-    sense Here (call "searchFood" [mkParam dest, mkParam dest]) next (Marker 3)
-    sense Here (call "searchFood" [mkParam dest, mkParam dest]) next (Marker 5)
+    (sense Here (call "searchFood" [mkParam dest, mkParam dest]) next (Marker 1))
+    (sense Here (call "searchFood" [mkParam dest, mkParam dest]) next (Marker 3))
+    (sense Here (call "searchFood" [mkParam dest, mkParam dest]) next (Marker 5))
     (mark ((dest + 3) `mod` 6) (call "searchFood" [mkParam dest, mkParam dest]))
     --If movement fails, pick a random new even direction
     (toss 2 (call "searchFood" [mkParam dest, mkParam ((dest - 2) `mod` 6)]) (call "searchFood" [mkParam dest, mkParam ((dest + 2) `mod` 6)]))
@@ -83,10 +83,10 @@ followHomeDef = combineList ([followHome facing | facing <- [1, 3, 5]] ++ [turnN
 followHome :: Dir -> Code
 followHome facing = define "followHome" [mkParam facing] $ combine
     (move next this) --Todo: handle collisions with other ants
-    (sense Here next (relative 6) Home)
+    (sense Here next (relative 5) Home)
     (dropFood next)
-    (combineList (replicate 3 (turn L next)))
-    (call "searchFood" [mkParam ((facing + 3) `mod` 6), mkParam ((facing + 3) `mod` 6)])
+    (combineList (replicate 2 (turn L next)))
+    (turn L (call "searchFood" [mkParam ((facing + 3) `mod` 6), mkParam ((facing + 3) `mod` 6)]))
     (follow 1)
     (follow 3)
     (follow 5)
