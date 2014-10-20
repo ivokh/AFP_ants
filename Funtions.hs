@@ -45,9 +45,9 @@ searchFood facing dest = define "searchFood" [mkParam facing, mkParam dest] $ co
     (sense Here (call "takeAndGoHome" [mkParam facing]) next Food)
     --Sense a path leading to food
     (sense Here (call "startFollowFood" [mkParam facing]) next foodPath)
-    --If food or path wasn't found, leave a mark that leads to home and move
+    --If food or path wasn't found, move and leave a mark that leads to home
+    (move (relative 2) (call "searchFood" [mkParam dest, mkParam dest])) 
     (mark ((dest + 3) `mod` 6) next)
-    (move (call "searchFood" [mkParam dest, mkParam dest]) next) 
     --If movement fails, pick a random new even direction
     (toss 2 (call "searchFood" [mkParam dest, mkParam ((dest - 2) `mod` 6)]) (call "searchFood" [mkParam dest, mkParam ((dest + 2) `mod` 6)]))
         where
@@ -101,12 +101,10 @@ followToFoodDef = combineList ([followToFood facing | facing <- [0, 2, 4]] ++ [t
 --Idea: if food is gone, leave a marker for other ants and start clearing the trail of marker 0, other ants go home and search
 followToFood :: Dir -> Code
 followToFood facing = define "followToFood" [mkParam facing] $ combine
-    (move next this) --Todo: handle collisions with other ants
-    (follow 1)
-    (follow 3)
-    (follow 5)
+    combineList [follow n | n <- [0, 2, 4]]
         where follow n = sense Here (call "turnN" [mkParam $ shortestTurn (n + 3 - facing), mkParam $ call "followToFood" [mkParam ((n + 3) `mod` 6)]]) next (Marker n)
 
+        
 -- | Defines turnN for all legitimate parameters, given the next state
 turnNDef :: AntState -> Code
 turnNDef st = combineList [turnN n st | n <- [-3..3]]
@@ -116,33 +114,5 @@ turnN :: Int -> AntState -> Code
 turnN n st | n > 0     = define "turnN" [mkParam n, mkParam st] $ turn R (call "turnN" [mkParam (n - 1), mkParam st])
            | n < 0     = define "turnN" [mkParam n, mkParam st] $ turn L (call "turnN" [mkParam (n + 1), mkParam st])
            | otherwise = addLabel "turnN" [mkParam 0, mkParam st] st
-           
-{-
-#############################################
-Some (possibly useless) funtions for testing:
-#############################################
--}
-main' = 
-    do
-        let code = unlines $ map show (runCode test)
-        writeFile "testCode2.txt" code
-
-test :: Code
-test = annotate "test" $ combine
-        (toss 2 (jump "init1") (call "move" [mkParam (100 :: Int)])) --Split the ants in 2 groups of approximately the same size
-        (annotate "init1" init1)
-        (define "move" [mkParam (100 :: Int)] (move' 100))
-    
---initialize group 1
-init1 :: Code
-init1 = combine
-    (fmap concat . replicateM 10 $ dropFood next) --just stall 10 turns trying to drop things..
-    (turn L (call "test" [])) -- ..turn left and them toss a coin again :D
-    
---initialize group 2
-init2 :: Code
-init2 = move' 100 --MOVE MOVE MOVE!!
-
---tries to move n times
-move' :: Int -> Code
-move' n = if n == 1 then move next next else combine (move next next) (define "move" [mkParam (n - 1)] $ move' (n - 1))
+        
+        
