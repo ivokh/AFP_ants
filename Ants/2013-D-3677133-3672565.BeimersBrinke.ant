@@ -1,0 +1,229 @@
+Mark 5 8; Chiel ten Brinke 3677133 Mattias Beimers 3672565
+Move 0 0
+Sense Ahead 4 38 Marker 1
+Sense Ahead 97 92 Food
+Sense Ahead 151 147 Home
+Sense Ahead 205 201 Food
+Sense Ahead 216 224 Friend
+Turn Right 7
+Sense Ahead 9 15 FoeHome
+Turn Right 16
+Sense Ahead 23 18 Food
+PickUp 12 13
+Turn Right 26
+Flip 4 28 31
+Sense LeftAhead 9 10 FoeHome
+Sense RightAhead 9 14 FoeHome
+Turn Right 17
+Turn Right 1
+Sense RightAhead 24 19 Food
+Sense LeftAhead 25 13 Food
+Move 11 13
+Turn Right 20
+Turn Left 20
+Sense Ahead 18 20 Home
+Sense Ahead 19 21 Home
+Sense Ahead 13 22 Home
+Turn Right 27
+Turn Right 2
+Flip 2 29 30
+Turn Right 31
+Turn Left 31
+Move 0 13
+Mark 1 33
+Sense Ahead 43 39 Home
+Drop 6
+Sense Ahead 53 49 Marker 5
+Sense Here 34 2 Home
+Sense LeftAhead 4 32 Marker 1
+Sense RightAhead 4 37 Marker 1
+Sense RightAhead 41 40 Home
+Sense LeftAhead 42 35 Home
+Turn Right 44
+Turn Left 45
+Move 34 39
+Move 34 40
+Move 34 35
+Flip 4 85 88
+Move 36 58
+Turn Right 76
+Sense RightAhead 51 50 Marker 5
+Sense LeftAhead 52 46 Marker 5
+Turn Right 54
+Turn Left 55
+Move 36 49
+Move 36 50
+Move 36 47
+Move 36 64
+Move 36 70
+Move 36 59
+Move 36 60
+Move 36 61
+Move 36 62
+Move 36 63
+Move 36 56
+Move 36 65
+Move 36 66
+Move 36 67
+Move 36 68
+Move 36 69
+Move 36 57
+Move 36 71
+Move 36 72
+Move 36 73
+Move 36 74
+Move 36 75
+Move 36 48
+Move 77 78
+Turn Left 82
+Turn Left 83
+Move 80 81
+Turn Right 84
+Turn Right 46
+Turn Left 36
+Turn Left 79
+Turn Right 36
+Flip 2 86 87
+Turn Right 88
+Turn Left 88
+Move 36 46
+PickUp 90 91
+Turn Right 100
+Sense Ahead 109 105 Marker 1
+Sense RightAhead 98 93 Food
+Sense LeftAhead 99 91 Food
+Move 89 91
+Turn Right 94
+Turn Left 94
+Sense Ahead 92 94 Home
+Sense Ahead 93 95 Home
+Sense Ahead 91 96 Home
+Turn Right 101
+Turn Right 4
+Flip 4 141 144
+Move 3 114
+Turn Right 132
+Sense RightAhead 107 106 Marker 1
+Sense LeftAhead 108 102 Marker 1
+Turn Right 110
+Turn Left 111
+Move 3 105
+Move 3 106
+Move 3 103
+Move 3 120
+Move 3 126
+Move 3 115
+Move 3 116
+Move 3 117
+Move 3 118
+Move 3 119
+Move 3 112
+Move 3 121
+Move 3 122
+Move 3 123
+Move 3 124
+Move 3 125
+Move 3 113
+Move 3 127
+Move 3 128
+Move 3 129
+Move 3 130
+Move 3 131
+Move 3 104
+Move 133 134
+Turn Left 138
+Turn Left 139
+Move 136 137
+Turn Right 140
+Turn Right 102
+Turn Left 3
+Turn Left 135
+Turn Right 3
+Flip 2 142 143
+Turn Right 144
+Turn Left 144
+Move 3 102
+Sense Ahead 161 157 Marker 1
+Sense Here 5 4 Home
+Sense RightAhead 149 148 Home
+Sense LeftAhead 150 145 Home
+Turn Right 152
+Turn Left 153
+Move 5 147
+Move 5 148
+Move 5 145
+Flip 4 193 196
+Move 4 166
+Turn Right 184
+Sense RightAhead 159 158 Marker 1
+Sense LeftAhead 160 154 Marker 1
+Turn Right 162
+Turn Left 163
+Move 4 157
+Move 4 158
+Move 4 155
+Move 4 172
+Move 4 178
+Move 4 167
+Move 4 168
+Move 4 169
+Move 4 170
+Move 4 171
+Move 4 164
+Move 4 173
+Move 4 174
+Move 4 175
+Move 4 176
+Move 4 177
+Move 4 165
+Move 4 179
+Move 4 180
+Move 4 181
+Move 4 182
+Move 4 183
+Move 4 156
+Move 185 186
+Turn Left 190
+Turn Left 191
+Move 188 189
+Turn Right 192
+Turn Right 154
+Turn Left 4
+Turn Left 187
+Turn Right 4
+Flip 2 194 195
+Turn Right 196
+Turn Left 196
+Move 4 154
+Drop 6
+Sense LeftAhead 209 215 Home
+Sense LeftAhead 198 208 Home
+Flip 20 197 198
+Sense RightAhead 203 202 Food
+Sense LeftAhead 204 199 Food
+Turn Right 206
+Turn Left 207
+Move 197 201
+Move 197 202
+Move 197 198
+Sense Here 200 198 Home
+Turn Left 215
+Sense RightAhead 213 212 Home
+Sense RightAhead 213 4 Home
+Turn Right 211
+Turn Right 214
+Move 5 210
+Sense Ahead 214 210 Home
+Sense RightAhead 217 222 Friend
+Sense LeftAhead 218 223 Friend
+Turn Right 219
+Sense RightAhead 220 222 Friend
+Turn Left 226
+Sense LeftAhead 225 223 Friend
+Turn Right 224
+Turn Left 224
+Move 7 224
+Turn Right 227
+Turn Left 221
+Turn Right 228
+Turn Right 3
