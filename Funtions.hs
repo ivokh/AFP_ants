@@ -22,7 +22,7 @@ main =
                 startFollowFoodDef
                 followToFoodDef
                 searchFoodDef
-        writeFile "pathFollowing2.txt" code
+        writeFile "pathFollowing2.ant" code
         
 -- | Assigns random roles to ants, the list must be length 2 or larger, every antstate in the list has the same chance of being selected
 assignRandom :: [AntState] -> Code
@@ -79,6 +79,8 @@ followHomeDef = combineList ([followHome facing | facing <- [1, 3, 5]] ++ [turnN
 followHome :: Dir -> Code
 followHome facing = define "followHome" [mkParam facing] $ combine
     (move next this) --Todo: handle collisions with other ants
+    (sense Here next (relative 2) Home)
+    (dropFood next)
     (follow 1)
     (follow 3)
     (follow 5)
