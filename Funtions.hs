@@ -14,14 +14,21 @@ foodPath = Marker 0
 main = 
     do
         let code = unlines . map show . runCode $ combine
+                defendHome
                 --Start with assigning roles
-                (assignRandom [call "searchFood" [mkParam 0, mkParam dir] | dir <- [0, 2, 4]])
+                (annotate "start" (assignRandom [call "searchFood" [mkParam 0, mkParam dir] | dir <- [0, 2, 4]]))
                 --All other code comes here (note that all states have the same properties, except for state 1 where execution starts)
                 takeAndGoHomeDef
                 followHomeDef
                 startFollowFoodDef
                 followToFoodDef
                 searchFoodDef
+                wait
+                (guardEntrance RightAhead)
+                (guardEntrance LeftAhead)
+                (guardEntrance' LeftAhead)
+                (guardEntrance' RightAhead)
+                (guardEntrance' Ahead)
         writeFile "pathFollowing2.ant" code
         
 -- | Assigns random roles to ants, the list must be length 2 or larger, every antstate in the list has the same chance of being selected
@@ -42,12 +49,17 @@ searchFood facing dest = define "searchFood" [mkParam facing, mkParam dest] $ co
     --Turn to the assigned direction
     (turnN' (shortestTurn (dest - facing)))
     --Sense food
-    (sense Here (call "takeAndGoHome" [mkParam facing]) next Food)
+    (sense Here next (relative 2) Food)
+    (sense Here next (call "takeAndGoHome" [mkParam dest]) Home)
     --Sense a path leading to food
-    (sense Here (call "startFollowFood" [mkParam facing]) next foodPath)
+    (sense Here (call "startFollowFood" [mkParam dest]) next foodPath)
     --If food or path wasn't found, move and leave a mark that leads to home
-    (move (relative 2) (call "searchFood" [mkParam dest, mkParam dest])) 
-    (mark ((dest + 3) `mod` 6) next)
+    (move next (relative 5))
+    --Only leave a marker if there is no path marker already
+    (sense Here (call "searchFood" [mkParam dest, mkParam dest]) next (Marker 1))
+    (sense Here (call "searchFood" [mkParam dest, mkParam dest]) next (Marker 3))
+    (sense Here (call "searchFood" [mkParam dest, mkParam dest]) next (Marker 5))
+    (mark ((dest + 3) `mod` 6) (call "searchFood" [mkParam dest, mkParam dest]))
     --If movement fails, pick a random new even direction
     (toss 2 (call "searchFood" [mkParam dest, mkParam ((dest - 2) `mod` 6)]) (call "searchFood" [mkParam dest, mkParam ((dest + 2) `mod` 6)]))
         where
@@ -57,7 +69,7 @@ searchFood facing dest = define "searchFood" [mkParam facing, mkParam dest] $ co
             
 -- | Gives the shortest turn for an int, where possitive means clockwise and negative means counter-clockwise
 shortestTurn :: Int -> Int
-shortestTurn n | m > 3     = 6 - m
+shortestTurn n | m > 3     = m - 6
                | m < -3    = 6 + m
                | otherwise = m
     where m = n `mod` 6
@@ -79,11 +91,16 @@ followHomeDef = combineList ([followHome facing | facing <- [1, 3, 5]] ++ [turnN
 followHome :: Dir -> Code
 followHome facing = define "followHome" [mkParam facing] $ combine
     (move next this) --Todo: handle collisions with other ants
-    (sense Here next (relative 2) Home)
+    (sense Here next (relative 5) Home)
     (dropFood next)
+    (combineList (replicate 2 (turn L next)))
+    (turn L (call "searchFood" [mkParam ((facing + 3) `mod` 6), mkParam ((facing + 3) `mod` 6)]))
     (follow 1)
     (follow 3)
     (follow 5)
+    (follow 3)
+    (follow 1)
+    (turn R this)
         where follow n = sense Here (call "turnN" [mkParam $ shortestTurn (n - facing), mkParam $ call "followHome" [mkParam n]]) next (Marker n)
     
 startFollowFoodDef :: Code
@@ -125,3 +142,69 @@ turnN n st | n > 0     = define "turnN" [mkParam n, mkParam st] $ turn R (call "
            | otherwise = addLabel "turnN" [mkParam 0, mkParam st] st
         
         
+defendHome :: Code
+defendHome = annotate "defendHome" $ combine
+    (sense Ahead (jump "step1") next Home)
+    (sense LeftAhead (jump "step1") next Home)
+    (sense RightAhead (jump "step1") next Home)
+    (mark 0 next)
+    (move this this)
+    (annotate "step1" $ combine
+        (pickUp next next)
+        (pickUp next next)
+        (pickUp next next) 
+        (pickUp next next) -- Wait untill the first marker is dropped
+        (sense Ahead next (jump "step2") (Marker 0))  
+        (mark 0 next)
+        (sense LeftAhead (call "guardEntrance'" [mkParam LeftAhead]) this Friend)
+    )
+    (annotate "step2" $ combine
+        (sense Ahead (jump "step4") next Home)
+        (sense RightAhead next (jump "step3") (Marker 0))
+        (move (call "guardEntrance" [mkParam RightAhead]) next)
+    )
+    (annotate "step3" $ combine
+        (sense LeftAhead next (jump "start") (Marker 0))
+        (move (call "guardEntrance" [mkParam LeftAhead]) next)     
+    )
+    (annotate "step4" $ combine
+        (pickUp next next)
+        (pickUp next next)
+        (pickUp next next) -- Wait to make sure the second marker has been droppd
+        (sense RightAhead next (jump "step5") (Marker 0))
+        (move (call "guardEntrance'" [mkParam Ahead]) next)
+    )
+    (annotate "step5" $ combine
+        (sense LeftAhead next (jump "start") (Marker 0))
+        (move (call "guardEntrance'" [mkParam Ahead]) next)
+    )
+
+guardEntrance :: SenseDir -> Code
+guardEntrance s = define "guardEntrance" [mkParam s] $ combine
+    (sense s next this Foe)
+    (move next this)
+    (turn L next)
+    (turn L next)
+    (turn L next)
+    (move next this)
+    (turn L next)
+    (turn L next)
+    (turn L (call "guardEntrance" [mkParam s]))
+
+guardEntrance' :: SenseDir -> Code
+guardEntrance' s = define "guardEntrance'" [mkParam s] $ combine
+    (sense s this next Friend)
+    (move next this)
+    (turn L next)
+    (turn L next)
+    (turn L next)
+    (move next this)
+    (turn L next)
+    (turn L next)
+    (turn L (call "guardEntrance'" [mkParam s]))
+
+wait :: Code
+wait = annotate "wait" $ combine
+    (pickUp this this)
+
+
