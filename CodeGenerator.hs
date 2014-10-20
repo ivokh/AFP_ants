@@ -21,7 +21,18 @@ data Instruction
  deriving (Show, Eq)
  
 data Condition = Friend | Foe | FriendWithFood | FoeWithFood | Food | Rock | Marker Marker | FoeMarker | Home | FoeHome 
-   deriving (Show, Eq)
+   deriving (Eq)
+
+instance Show Condition where
+    show (Marker i) = "Marker " ++ (show i)
+    show Friend = "Friend"
+    show FriendWithFood = "FriendWithFood"
+    show FoeWithFood = "FoeWithFood"
+    show Food = "Food"
+    show Rock = "Rock"
+    show FoeMarker = "FoeMarker"
+    show Home = "Home"
+    show FoeHome = "FoeHome"
 
 data SenseDir =
     Here
