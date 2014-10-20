@@ -97,15 +97,22 @@ startFollowFood facing = define "startFollowFood" [mkParam facing] $
     
 -- | Defines followToFood
 followToFoodDef :: Code
-followToFoodDef = combineList ([followToFood facing | facing <- [0, 2, 4]] ++ [turnNDef (call "followToFood" [mkParam facing]) | facing <- [0, 2, 4]])
+followToFoodDef = combineList ([followToFood facing | facing <- [0..5]] ++
+                     [turnNDef (call "followToFood" [mkParam facing]) | facing <- [0..5]] ++
+                     [detectPath facing | facing <- [0..5]])
     
 -- | Follows a trail that leads to food, note that paths lead to home, so we need to follow it in the opposite direction
 --Idea: if food is gone, leave a marker for other ants and start clearing the trail of marker 0, other ants go home and search
 followToFood :: Dir -> Code
-followToFood facing = define "followToFood" [mkParam facing] $ combine
+followToFood facing = define "followToFood" [mkParam facing] $ 
     combineList [follow n | n <- [0, 2, 4]]
         where follow n = sense Here (call "turnN" [mkParam $ shortestTurn (n + 3 - facing), mkParam $ call "followToFood" [mkParam ((n + 3) `mod` 6)]]) next (Marker n)
 
+detectPath :: Dir -> Code
+detectPath facing = define "detectPath" [mkParam facing] $ combine
+    (combineList [search x | x <- [Ahead, LeftAhead, RightAhead]])
+    (define "move" [mkParam facing] $ move (call "followToFood" [mkParam facing]) this)
+        where search x = sense x (call "move" [mkParam facing]) next foodPath
         
 -- | Defines turnN for all legitimate parameters, given the next state
 turnNDef :: AntState -> Code
