@@ -81,7 +81,9 @@ followHome facing = define "followHome" [mkParam facing] $ combine
     (move next this) --Todo: handle collisions with other ants
     (sense Here next (relative 2) Home)
     (dropFood next)
+    (toss 3 next (relative 2))
     (follow 1)
+    (toss 2 next (relative 2))
     (follow 3)
     (follow 5)
         where follow n = sense Here (call "turnN" [mkParam $ shortestTurn (n - facing), mkParam $ call "followHome" [mkParam n]]) next (Marker n)
