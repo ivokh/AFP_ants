@@ -42,12 +42,12 @@ searchFood facing dest = define "searchFood" [mkParam facing, mkParam dest] $ co
     --Turn to the assigned direction
     (turnN' (shortestTurn (dest - facing)))
     --Sense food
-    (sense Here (call "takeAndGoHome" [mkParam facing]) next Food)
+    (sense Here (call "takeAndGoHome" [mkParam dest]) next Food)
     --Sense a path leading to food
-    (sense Here (call "startFollowFood" [mkParam facing]) next foodPath)
+    (sense Here (call "startFollowFood" [mkParam dest]) next foodPath)
     --If food or path wasn't found, move and leave a mark that leads to home
-    (move (relative 2) (call "searchFood" [mkParam dest, mkParam dest])) 
-    (mark ((dest + 3) `mod` 6) next)
+    (move next (relative 2)) 
+    (mark ((dest + 3) `mod` 6) (call "searchFood" [mkParam dest, mkParam dest]))
     --If movement fails, pick a random new even direction
     (toss 2 (call "searchFood" [mkParam dest, mkParam ((dest - 2) `mod` 6)]) (call "searchFood" [mkParam dest, mkParam ((dest + 2) `mod` 6)]))
         where
@@ -57,7 +57,7 @@ searchFood facing dest = define "searchFood" [mkParam facing, mkParam dest] $ co
             
 -- | Gives the shortest turn for an int, where possitive means clockwise and negative means counter-clockwise
 shortestTurn :: Int -> Int
-shortestTurn n | m > 3     = 6 - m
+shortestTurn n | m > 3     = m - 6
                | m < -3    = 6 + m
                | otherwise = m
     where m = n `mod` 6
@@ -84,6 +84,7 @@ followHome facing = define "followHome" [mkParam facing] $ combine
     (follow 1)
     (follow 3)
     (follow 5)
+    (turn R this)
         where follow n = sense Here (call "turnN" [mkParam $ shortestTurn (n - facing), mkParam $ call "followHome" [mkParam n]]) next (Marker n)
     
 startFollowFoodDef :: Code
