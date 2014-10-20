@@ -12,9 +12,9 @@ start = combine
     wait
     (guardEntrance RightAhead)
     (guardEntrance LeftAhead)
-    (test LeftAhead)
-    (test RightAhead)
-    (test Ahead)
+    (guardEntrance' LeftAhead)
+    (guardEntrance' RightAhead)
+    (guardEntrance' Ahead)
 
 defendHome :: Code
 defendHome = annotate "defendHome" $ combine
@@ -30,7 +30,7 @@ defendHome = annotate "defendHome" $ combine
         (pickUp next next) -- Wait untill the first marker is dropped
         (sense Ahead next (jump "step2") (Marker 0))  
         (mark 0 next)
-        (sense LeftAhead (call "test" [mkParam LeftAhead]) this Friend)
+        (sense LeftAhead (call "guardEntrance'" [mkParam LeftAhead]) this Friend)
     )
     (annotate "step2" $ combine
         (sense Ahead (jump "step4") next Home)
@@ -46,11 +46,11 @@ defendHome = annotate "defendHome" $ combine
         (pickUp next next)
         (pickUp next next) -- Wait to make sure the second marker has been droppd
         (sense RightAhead next (jump "step5") (Marker 0))
-        (move (call "test" [mkParam Ahead]) next)
+        (move (call "guardEntrance'" [mkParam Ahead]) next)
     )
     (annotate "step5" $ combine
         (sense LeftAhead next (jump "wander") (Marker 0))
-        (move (call "test" [mkParam Ahead]) next)
+        (move (call "guardEntrance'" [mkParam Ahead]) next)
     )
 
 guardEntrance :: SenseDir -> Code
@@ -65,8 +65,8 @@ guardEntrance s = define "guardEntrance" [mkParam s] $ combine
     (turn L next)
     (turn L (call "guardEntrance" [mkParam s]))
 
-test :: SenseDir -> Code
-test s = define "test" [mkParam s] $ combine
+guardEntrance' :: SenseDir -> Code
+guardEntrance' s = define "guardEntrance'" [mkParam s] $ combine
     (sense s this next Friend)
     (move next this)
     (turn L next)
@@ -75,7 +75,7 @@ test s = define "test" [mkParam s] $ combine
     (move next this)
     (turn L next)
     (turn L next)
-    (turn L (call "test" [mkParam s]))
+    (turn L (call "guardEntrance'" [mkParam s]))
 
 wander :: Code
 wander = annotate "wander" $ combine
