@@ -104,7 +104,7 @@ data PathInstr = MarkPath | UnmarkPath | DoNothing
 searchHome :: Dir -> PathInstr -> Code
 searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leaveMark] $ combine
     --When cleaning a path, let other ants know so they move out of the way, and keep trying to move. Otherwise other ants have priority
-    (if leaveMark == UnmarkPath then combine (mark foodGone next) (move next this) else tryMove facing)
+    (if leaveMark == UnmarkPath then move next this else tryMove facing)
     --If moving was succesful, leave a marker and sense if at home
     (case leaveMark of
         MarkPath   -> mark foodPath next
@@ -177,9 +177,10 @@ detectPath facing = define "detectPath" [mkParam facing] $ combine
     --If there's no path ahead it must mean a sharp turn was made, or the food is gone
     (combineList $ replicate 3 (turn L next))
     (search LeftAhead next)
+    (search RightAhead next)
     --Start cleaning up the trail if it's realy gone
-    (search RightAhead (call "searchHome" [mkParam ((facing + 3) `mod` 6), mkParam UnmarkPath]))
-    
+    (unMark foodPath next)
+    (mark foodGone (call "searchHome" [mkParam ((facing + 3) `mod` 6), mkParam UnmarkPath]))
     
     --TODO: Search the neighborhood for food
     --TODO: (zowel foodpath als homepath moeten uitgebreid worden tijdens het in de buurt zoeken)
