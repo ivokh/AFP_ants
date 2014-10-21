@@ -91,18 +91,25 @@ takeAndGoHome facing = define "takeAndGoHome" [mkParam facing] $ combine
     (mark foodPath next)
     (combineList (replicate 2 (turn L next)))
     --Start following the path home, leaving a foodpath trail
-    (turn L (call "searchHome" [mkParam ((facing + 3) `mod` 6), mkParam True]))
+    (turn L (call "searchHome" [mkParam ((facing + 3) `mod` 6), mkParam MarkPath]))
     
 searchHomeDef :: Code
-searchHomeDef = combineList ([searchHome facing leaveMark | facing <- [0..5], leaveMark <- [True, False]] ++ 
-                [turnNDef (call "searchHome" [mkParam facing, mkParam leaveMark]) | facing <- [0..5], leaveMark <- [True, False]])
+searchHomeDef = combineList ([searchHome facing leaveMark | facing <- [0..5], leaveMark <- [MarkPath, UnmarkPath, DoNothing]] ++ 
+                [turnNDef (call "searchHome" [mkParam facing, mkParam leaveMark]) | facing <- [0..5], leaveMark <- [MarkPath, UnmarkPath, DoNothing]])
 
+data PathInstr = MarkPath | UnmarkPath | DoNothing
+    deriving (Show, Eq)
+                
 -- | Follows a path of odd markers, possibly leaving a trail of foodpath markers, given the direction it's facing (should be odd)
-searchHome :: Dir -> Bool -> Code
+searchHome :: Dir -> PathInstr -> Code
 searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leaveMark] $ combine
-    (tryMove facing)
+    --When cleaning a path, let other ants know so they move out of the way, and keep trying to move. Otherwise other ants have priority
+    (if leaveMark == UnmarkPath then combine (mark foodGone next) (move next this) else tryMove facing)
     --If moving was succesful, leave a marker and sense if at home
-    (if leaveMark then (mark foodPath next) else return [])
+    (case leaveMark of
+        MarkPath   -> mark foodPath next
+        UnmarkPath -> combine (unMark foodPath next) (mark foodGone next)
+        _          -> return [])
     (sense Here next (relative 5) Home)
     (dropFood next)
     (combineList (replicate 2 (turn L next)))
@@ -111,7 +118,7 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
     (follow 1 next)
     (follow 3 next)
     --If no path is found, keep looking
-    (follow 5 (call "searchHome" [mkParam facing, mkParam False]))
+    (follow 5 (call "searchHome" [mkParam facing, mkParam DoNothing]))
         where --If the path can be followed, keep leaving marks
               follow n st = sense Here (call "turnN" [mkParam $ shortestTurn (n - facing), mkParam $ call "searchHome" [mkParam n, mkParam leaveMark]]) st (Marker n)
               --If moving fails, pick a random direction and try to find another path there, otherwise go to next
@@ -120,12 +127,12 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
                   (toss 2 next (relative 2))
                   (toss 2 (relative 2) (relative 3))
                   (toss 2 (relative 3) (relative 5))
-                  (turn L (call "searchHome" [mkParam ((facing - 1) `mod` 6), mkParam False]))
-                  (turn R (call "searchHome" [mkParam ((facing + 1) `mod` 6), mkParam False]))
+                  (turn L (call "searchHome" [mkParam ((facing - 1) `mod` 6), mkParam DoNothing]))
+                  (turn R (call "searchHome" [mkParam ((facing + 1) `mod` 6), mkParam DoNothing]))
                   (turn L next)
-                  (turn L (call "searchHome" [mkParam ((facing - 2) `mod` 6), mkParam False]))
+                  (turn L (call "searchHome" [mkParam ((facing - 2) `mod` 6), mkParam DoNothing]))
                   (turn R next)
-                  (turn R (call "searchHome" [mkParam ((facing + 2) `mod` 6), mkParam False]))
+                  (turn R (call "searchHome" [mkParam ((facing + 2) `mod` 6), mkParam DoNothing]))
     
 startFollowFoodDef :: Code
 startFollowFoodDef = combineList [startFollowFood facing | facing <- [0..5]]
@@ -145,8 +152,17 @@ followToFoodDef = combineList ([followToFood facing | facing <- [0..5]] ++
 -- | Follows a trail that leads to food, note that paths lead to home, so we need to follow it in the opposite direction
 --Idea: if food is gone, leave a marker for other ants and start clearing the trail of marker 0, other ants go home and search
 followToFood :: Dir -> Code
-followToFood facing = define "followToFood" [mkParam facing] $ 
-    combineList [follow n | n <- [0, 2, 4]]
+followToFood facing = define "followToFood" [mkParam facing] $ combine
+    --Sense if the food is gone
+    (sense Ahead next (call "followToFood_" [mkParam facing]) foodGoneCond)
+    --If food is gone, clear the marker and start looking for food
+    (unMark foodPath next)
+    (mark foodGone (call "searchFood" [mkParam facing, mkParam facing]))
+    
+    --Helper function
+    (define "followToFood_" [mkParam facing] $ combine
+    (move next (call "followToFood" [mkParam facing]))
+    (combineList [follow n | n <- [0, 2, 4]]))
         where follow n = sense Here (call "turnN" [mkParam $ shortestTurn (n + 3 - facing), mkParam $ call "followToFood" [mkParam ((n + 3) `mod` 6)]]) next (Marker n)
 
 -- | Detect the next link a path leading to food and follow it
@@ -157,18 +173,22 @@ detectPath facing = define "detectPath" [mkParam facing] $ combine
     --Only pick up food if not at home
     (sense Here next (call "takeAndGoHome" [mkParam facing]) Home)
     --Look ahead
-    (combineList [search x | x <- [Ahead, LeftAhead, RightAhead]])
-    --If there's no path ahead it must mean a sharp turn was made
+    (combineList [search x next | x <- [Ahead, LeftAhead, RightAhead]])
+    --If there's no path ahead it must mean a sharp turn was made, or the food is gone
     (combineList $ replicate 3 (turn L next))
-    (search LeftAhead)
-    (search RightAhead)
-    --No sharp turn either, so we must be at the end of the trail, BUT there's no food!
-    --Search the neighborhood for food, and start cleaning up the trail if it's realy gone
-    --
-    --TODO (zowel foodpath als homepath moeten uitgebreid worden tijdens het in de buurt zoeken)
-    --
+    (search LeftAhead next)
+    --Start cleaning up the trail if it's realy gone
+    (search RightAhead (call "searchHome" [mkParam ((facing + 3) `mod` 6), mkParam UnmarkPath]))
+    
+    
+    --TODO: Search the neighborhood for food
+    --TODO: (zowel foodpath als homepath moeten uitgebreid worden tijdens het in de buurt zoeken)
+    
+    
+    
+    --Helper function
     (define "move" [mkParam facing] $ move (call "followToFood" [mkParam facing]) this)
-        where search x = sense x (call "move" [mkParam facing]) next foodPathCond
+        where search x st = sense x (call "move" [mkParam facing]) st foodPathCond
         
 -- | Defines turnN for all legitimate parameters, given the next state
 turnNDef :: AntState -> Code
