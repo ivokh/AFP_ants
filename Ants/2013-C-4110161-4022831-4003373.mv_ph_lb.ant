@@ -1,0 +1,25 @@
+Flip 2 1 4
+Turn Left 3
+Turn Left 4
+Turn Left 5
+Drop 5
+Flip 3 6 7
+Turn Left 10
+Flip 2 8 9
+Turn Right 10
+Drop 10
+Sense Here 11 13 Home
+Move 12 0
+Flip 1 10 10
+Sense Here 14 15 Food
+PickUp 17 0
+Move 16 0
+Flip 1 10 10
+Turn Left 18
+Turn Left 19
+Turn Left 20
+Sense Here 21 22 Home
+Drop 24
+Move 23 0
+Flip 1 20 20
+Flip 1 0 0
