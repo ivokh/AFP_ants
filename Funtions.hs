@@ -89,6 +89,7 @@ takeAndGoHome :: Dir -> Code
 takeAndGoHome facing = define "takeAndGoHome" [mkParam facing] $ combine
     (pickUp next next)
     (mark foodPath next)
+    (unMark foodGone next)
     (combineList (replicate 2 (turn L next)))
     --Start following the path home, leaving a foodpath trail
     (turn L (call "searchHome" [mkParam ((facing + 3) `mod` 6), mkParam MarkPath]))
@@ -107,7 +108,7 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
     (if leaveMark == UnmarkPath then move next this else tryMove facing)
     --If moving was succesful, leave a marker and sense if at home
     (case leaveMark of
-        MarkPath   -> mark foodPath next
+        MarkPath   -> combine (mark foodPath next) (unMark foodGone next)
         UnmarkPath -> combine (unMark foodPath next) (mark foodGone next)
         _          -> return [])
     (sense Here next (relative 5) Home)
