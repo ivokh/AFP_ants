@@ -1,3 +1,5 @@
 - zorgen dat het voedsel op de juiste plaats gedropt wordt bij de hill.
-- oplossing voor bochten op de terug weg van een pad
-- 
+- [mee bezig] pad uitbreiden als voedsel particle weg is, maar er 'in de buurt' nog wel voedsel is
+- [mee bezig] markers opruimen als voedsel weg is
+- [mee bezig] voedsel zoekers moeten aan de kant als iemand markers aan het opruimen is
+- na random aantal passen een bocht maken (random: 2 naar links of 2 naar rechts) bij zoeken naar voedsel, de volgende bocht moet dan in tegengestelde richting zijn zodat er geen driehoek wordt gelopen

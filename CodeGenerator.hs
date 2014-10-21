@@ -1,5 +1,5 @@
 {-#LANGUAGE TypeSynonymInstances, FlexibleInstances, ExistentialQuantification#-}
-module CodeGenerator (Instruction(..), Condition(..), SenseDir(..), AntState, MoveDir(..), Code, 
+module CodeGenerator (Marker, Instruction(..), Condition(..), SenseDir(..), AntState, MoveDir(..), Code, 
     combine, combineList, runCode, next, this, annotate, define, addLabel, sense, mark, unMark, pickUp, dropFood, turn, move, toss, call, jump, relative, mkParam) where
 
 import Data.Maybe
