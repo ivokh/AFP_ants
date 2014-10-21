@@ -28,12 +28,12 @@ main =
                 startFollowFoodDef
                 followToFoodDef
                 searchFoodDef
-                wait
                 (guardEntrance RightAhead)
                 (guardEntrance LeftAhead)
                 (guardEntrance' LeftAhead)
                 (guardEntrance' RightAhead)
                 (guardEntrance' Ahead)
+                guardEntrance''
         writeFile "pathFollowing2.ant" code
         
 -- | Assigns random roles to ants, the list must be length 2 or larger, every antstate in the list has the same chance of being selected
@@ -187,7 +187,7 @@ defendHome = annotate "defendHome" $ combine
     (sense LeftAhead (jump "step1") next Home)
     (sense RightAhead (jump "step1") next Home)
     (mark 0 next)
-    (move this this)
+    (move (jump "start") (jump "start"))
     (annotate "step1" $ combine
         (pickUp next next)
         (pickUp next next)
@@ -195,7 +195,11 @@ defendHome = annotate "defendHome" $ combine
         (pickUp next next) -- Wait untill the first marker is dropped
         (sense Ahead next (jump "step2") (Marker 0))  
         (mark 0 next)
-        (sense LeftAhead (call "guardEntrance'" [mkParam LeftAhead]) this Friend)
+        (pickUp next next)
+        (pickUp next next)
+        (pickUp next next)
+        (pickUp next next)
+        (sense LeftAhead (jump "guardEntrance''") this Friend)
     )
     (annotate "step2" $ combine
         (sense Ahead (jump "step4") next Home)
@@ -218,6 +222,7 @@ defendHome = annotate "defendHome" $ combine
         (move (call "guardEntrance'" [mkParam Ahead]) next)
     )
 
+-- For the two ants at the front of the defending formation
 guardEntrance :: SenseDir -> Code
 guardEntrance s = define "guardEntrance" [mkParam s] $ combine
     (sense s next this Foe)
@@ -230,6 +235,7 @@ guardEntrance s = define "guardEntrance" [mkParam s] $ combine
     (turn L next)
     (turn L (call "guardEntrance" [mkParam s]))
 
+-- For the two ants behind the two frontal ants
 guardEntrance' :: SenseDir -> Code
 guardEntrance' s = define "guardEntrance'" [mkParam s] $ combine
     (sense s this next Friend)
@@ -242,8 +248,40 @@ guardEntrance' s = define "guardEntrance'" [mkParam s] $ combine
     (turn L next)
     (turn L (call "guardEntrance'" [mkParam s]))
 
-wait :: Code
-wait = annotate "wait" $ combine
-    (pickUp this this)
+guardEntrance'' :: Code
+guardEntrance'' = annotate "guardEntrance''" $ combine
+    -- Move forward one step when the ants in front of this one also move
+    (sense LeftAhead this next Friend)
+    (move next this)
+    (annotate "collectKill" $ combine
+        (move next this)
+        (pickUp next next)
+        (turn L next)
+        (turn L next)
+        (turn L next)
+        (move next this)
+        (dropFood next)
+        (turn L next)
+        (turn L next)
+        (turn L next)
+        (sense Ahead (jump "collectKill") (jump "returnToPosition") Food)  
+    )
+    (annotate "returnToPosition" $ combine
+        (turn L next)
+        (turn L next)
+        (turn L next)
+        (move next this)
+        (turn L next)
+        (turn L next)
+        (turn L (jump "guardEntrance''"))
+    )
+    (sense Ahead (jump "collectKill") (jump "returnToPosition") Food)
+
+    
+
+-- Wait for n turns
+--wait :: Int -> Code
+--wait n = define "wait" [mkParam n] $ combine
+    
 
 
