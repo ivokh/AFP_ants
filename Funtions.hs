@@ -85,7 +85,7 @@ takeAndGoHomeDef = combineList [takeAndGoHome facing | facing <- [0..5]]
 -- | Pick up food and go home    
 takeAndGoHome :: Dir -> Code
 takeAndGoHome facing = define "takeAndGoHome" [mkParam facing] $ combine
-    (pickUp next next)
+    (pickUp next next) --Todo: leave foodgone marker and start searching again if pickup fails
     (mark foodPath next)
     (unMark foodGone next)
     (combineList (replicate 2 (turn L next)))
@@ -145,10 +145,10 @@ followToFoodDef = combineList ([followToFood facing | facing <- [0..5]] ++
 followToFood :: Dir -> Code
 followToFood facing = define "followToFood" [mkParam facing] $ combine
     --Turn to the direction that most likely has the next link in the path and look for the next link
-    (combineList [follow n | n <- [1, 3, 5]])
-    --This should never happen:
-    (turn L this)
-        where follow n = sense Here (call "turnN" [mkParam $ shortestTurn (n + 3 - facing), mkParam $ call "detectPath" [mkParam ((n + 3) `mod` 6)]]) next (Marker n)
+    (follow 1 next)
+    (follow 3 next)
+    (follow 5 (call "detectPath" [mkParam facing]))
+        where follow n st = sense Here (call "turnN" [mkParam $ shortestTurn (n + 3 - facing), mkParam $ call "detectPath" [mkParam ((n + 3) `mod` 6)]]) st (Marker n)
 
 -- | Detect the next link a path leading to food and follow it
 detectPath :: Dir -> Code
