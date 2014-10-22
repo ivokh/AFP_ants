@@ -160,11 +160,12 @@ detectPath facing = define "detectPath" [mkParam facing] $ combine
     --Look ahead
     (combineList [search x next facing | x <- [Ahead, LeftAhead, RightAhead]])
     --If there's no path ahead it must mean a sharp turn was made, or the food is gone
+    --We don't like sharp turns, so we remove the marker
+    (unMark foodPath next)
     (combineList $ replicate 3 (turn L next))
     (search LeftAhead next ((facing + 3) `mod` 6))
     (search RightAhead next ((facing + 3) `mod` 6))
     --Start cleaning up the trail if it's realy gone
-    (unMark foodPath next)
     (mark foodGone (call "searchHome" [mkParam ((facing + 3) `mod` 6), mkParam UnmarkPath]))
     
     --TODO: Search the neighborhood for food

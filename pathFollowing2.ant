@@ -582,14 +582,14 @@ Sense LeftAhead 810 581 Marker 4
 Sense LeftAhead 603 582 Marker 2
 Sense RightAhead 810 583 Marker 4
 Sense RightAhead 604 584 Marker 2
-Turn Left 585
+Unmark 2 585
 Turn Left 586
 Turn Left 587
-Sense LeftAhead 1032 588 Marker 4
-Sense LeftAhead 720 589 Marker 2
-Sense RightAhead 1032 590 Marker 4
-Sense RightAhead 721 591 Marker 2
-Unmark 2 592
+Turn Left 588
+Sense LeftAhead 1032 589 Marker 4
+Sense LeftAhead 720 590 Marker 2
+Sense RightAhead 1032 591 Marker 4
+Sense RightAhead 721 592 Marker 2
 Mark 4 260
 Move 522 594
 Flip 2 595 596
@@ -621,14 +621,14 @@ Sense LeftAhead 882 620 Marker 4
 Sense LeftAhead 642 621 Marker 2
 Sense RightAhead 882 622 Marker 4
 Sense RightAhead 643 623 Marker 2
-Turn Left 624
+Unmark 2 624
 Turn Left 625
 Turn Left 626
-Sense LeftAhead 1106 627 Marker 4
-Sense LeftAhead 759 628 Marker 2
-Sense RightAhead 1106 629 Marker 4
-Sense RightAhead 760 630 Marker 2
-Unmark 2 631
+Turn Left 627
+Sense LeftAhead 1106 628 Marker 4
+Sense LeftAhead 759 629 Marker 2
+Sense RightAhead 1106 630 Marker 4
+Sense RightAhead 760 631 Marker 2
 Mark 4 318
 Move 525 633
 Flip 2 634 635
@@ -660,14 +660,14 @@ Sense LeftAhead 958 659 Marker 4
 Sense LeftAhead 681 660 Marker 2
 Sense RightAhead 958 661 Marker 4
 Sense RightAhead 682 662 Marker 2
-Turn Left 663
+Unmark 2 663
 Turn Left 664
 Turn Left 665
-Sense LeftAhead 1178 666 Marker 4
-Sense LeftAhead 798 667 Marker 2
-Sense RightAhead 1178 668 Marker 4
-Sense RightAhead 799 669 Marker 2
-Unmark 2 670
+Turn Left 666
+Sense LeftAhead 1178 667 Marker 4
+Sense LeftAhead 798 668 Marker 2
+Sense RightAhead 1178 669 Marker 4
+Sense RightAhead 799 670 Marker 2
 Mark 4 376
 Move 528 672
 Flip 2 673 674
@@ -699,14 +699,14 @@ Sense LeftAhead 1032 698 Marker 4
 Sense LeftAhead 720 699 Marker 2
 Sense RightAhead 1032 700 Marker 4
 Sense RightAhead 721 701 Marker 2
-Turn Left 702
+Unmark 2 702
 Turn Left 703
 Turn Left 704
-Sense LeftAhead 810 705 Marker 4
-Sense LeftAhead 603 706 Marker 2
-Sense RightAhead 810 707 Marker 4
-Sense RightAhead 604 708 Marker 2
-Unmark 2 709
+Turn Left 705
+Sense LeftAhead 810 706 Marker 4
+Sense LeftAhead 603 707 Marker 2
+Sense RightAhead 810 708 Marker 4
+Sense RightAhead 604 709 Marker 2
 Mark 4 86
 Move 531 711
 Flip 2 712 713
@@ -738,14 +738,14 @@ Sense LeftAhead 1106 737 Marker 4
 Sense LeftAhead 759 738 Marker 2
 Sense RightAhead 1106 739 Marker 4
 Sense RightAhead 760 740 Marker 2
-Turn Left 741
+Unmark 2 741
 Turn Left 742
 Turn Left 743
-Sense LeftAhead 882 744 Marker 4
-Sense LeftAhead 642 745 Marker 2
-Sense RightAhead 882 746 Marker 4
-Sense RightAhead 643 747 Marker 2
-Unmark 2 748
+Turn Left 744
+Sense LeftAhead 882 745 Marker 4
+Sense LeftAhead 642 746 Marker 2
+Sense RightAhead 882 747 Marker 4
+Sense RightAhead 643 748 Marker 2
 Mark 4 144
 Move 534 750
 Flip 2 751 752
@@ -777,14 +777,14 @@ Sense LeftAhead 1178 776 Marker 4
 Sense LeftAhead 798 777 Marker 2
 Sense RightAhead 1178 778 Marker 4
 Sense RightAhead 799 779 Marker 2
-Turn Left 780
+Unmark 2 780
 Turn Left 781
 Turn Left 782
-Sense LeftAhead 958 783 Marker 4
-Sense LeftAhead 681 784 Marker 2
-Sense RightAhead 958 785 Marker 4
-Sense RightAhead 682 786 Marker 2
-Unmark 2 787
+Turn Left 783
+Sense LeftAhead 958 784 Marker 4
+Sense LeftAhead 681 785 Marker 2
+Sense RightAhead 958 786 Marker 4
+Sense RightAhead 682 787 Marker 2
 Mark 4 202
 Move 537 789
 Flip 2 790 791
