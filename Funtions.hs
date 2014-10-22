@@ -103,13 +103,14 @@ data PathInstr = MarkPath | UnmarkPath | DoNothing
 -- | Follows a path of odd markers, possibly leaving a trail of foodpath markers, given the direction it's facing (should be odd)
 searchHome :: Dir -> PathInstr -> Code
 searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leaveMark] $ combine
-    --When cleaning a path, let other ants know so they move out of the way, and keep trying to move. Otherwise other ants have priority
-    (tryMove facing)
-    --If moving was succesful, leave a marker and sense if at home
+    --Mark or unmark if necessary
     (case leaveMark of
         MarkPath   -> combine (mark foodPath next) (unMark foodGone next)
         UnmarkPath -> combine (unMark foodPath next) (mark foodGone next)
         _          -> (return []) :: Code)
+    --When cleaning a path, let other ants know so they move out of the way, and keep trying to move. Otherwise other ants have priority
+    (tryMove facing)
+    --If moving was succesful, sense if at home
     (sense Here next (relative 5) Home)
     (dropFood next)
     (combineList (replicate 2 (turn L next)))
