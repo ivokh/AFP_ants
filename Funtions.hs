@@ -210,8 +210,7 @@ defendHome = annotate "defendHome" $ combine
     (sense Ahead (jump "step1") next Home)
     (sense LeftAhead (jump "step1") next Home)
     (sense RightAhead (jump "step1") next Home)
-    (mark 4 next)
-    (move (jump "start") (jump "start"))
+    (mark 4 (jump "start"))
     (annotate "step1" $ combine
         (combineList $ replicate 4 (pickUp next next))  -- Wait untill the first marker is dropped
         (sense Ahead next (jump "step2") (Marker 4))  
@@ -260,27 +259,42 @@ guardEntrance' s = define "guardEntrance'" [mkParam s] $ combine
     (combineList $ replicate 2 (turn L next))
     (turn L (call "guardEntrance'" [mkParam s]))
 
+--guardEntrance'' :: Code
+--guardEntrance'' = annotate "guardEntrance''" $ combine
+--    -- Move forward one step when the ants in front of this one also move
+--    (sense LeftAhead this next Friend)
+--    (move next this)
+--    (annotate "collectKill" $ combine
+--        (move next this)
+--        (pickUp next next)
+--        (combineList $ replicate 3 (turn L next))
+--        (move next this)
+--        (dropFood next)
+--        (combineList $ replicate 3 (turn L next))
+--        (sense Ahead (jump "collectKill") (jump "returnToPosition") Food)  
+--    )
+--    (annotate "returnToPosition" $ combine
+--        (combineList $ replicate 3 (turn L next))
+--        (move next this)
+--        (combineList $ replicate 2 (turn L next))
+--        (turn L (jump "guardEntrance''"))
+--    )
+--    (sense Ahead (jump "collectKill") (jump "returnToPosition") Food)
 guardEntrance'' :: Code
 guardEntrance'' = annotate "guardEntrance''" $ combine
-    -- Move forward one step when the ants in front of this one also move
-    (sense LeftAhead this next Friend)
-    (move next this)
-    (annotate "collectKill" $ combine
+    (combineList $ replicate 3 (turn L next))
+    (sense Ahead (jump "collectFood") this Food)
+    (annotate "collectFood" $ combine 
         (move next this)
         (pickUp next next)
         (combineList $ replicate 3 (turn L next))
         (move next this)
         (dropFood next)
         (combineList $ replicate 3 (turn L next))
-        (sense Ahead (jump "collectKill") (jump "returnToPosition") Food)  
+        (sense Ahead (jump "collectFood") this Food)
     )
-    (annotate "returnToPosition" $ combine
-        (combineList $ replicate 3 (turn L next))
-        (move next this)
-        (combineList $ replicate 2 (turn L next))
-        (turn L (jump "guardEntrance''"))
-    )
-    (sense Ahead (jump "collectKill") (jump "returnToPosition") Food)
+
+
 
 repositionFoodInit :: Code
 repositionFoodInit = annotate "repositionFoodInit" $ combine
@@ -292,13 +306,19 @@ repositionFood = annotate "repositionFood" $ combine
     (turn L (jump "rotate"))
     (annotate "obstacle" $ combine
         -- Assume the obstacle is the defending ants
-        (sense LeftAhead next next (Marker 4))
-
+        (turn L next)
+        (move next this)
+        (move next this)
+        (dropFood next)
+        (turn R next)
+        (move next this)
+        (move (jump "rotate") this)
     )
     (annotate "rotate" $ combine
         (sense Ahead next (jump "repositionFood") Home)
+        (pickUp next next)
         (move (jump "rotate") next)
         (move (jump "rotate") next)
-        (move (jump "rotate") (jump "repositionFood"))
+        (sense LeftAhead (jump "obstacle") (jump "rotate") (Marker 4))
     )
 
