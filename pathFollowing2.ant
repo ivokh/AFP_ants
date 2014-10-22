@@ -1,31 +1,31 @@
 Sense Ahead 5 1 Home
 Sense LeftAhead 5 2 Home
 Sense RightAhead 5 3 Home
-Mark 0 4
+Mark 4 4
 Move 28 28
 PickUp 6 6
 PickUp 7 7
 PickUp 8 8
 PickUp 9 9
-Sense Ahead 10 16 Marker 0
-Mark 0 11
+Sense Ahead 10 16 Marker 4
+Mark 4 11
 PickUp 12 12
 PickUp 13 13
 PickUp 14 14
 PickUp 15 15
-Sense LeftAhead 1113 15 Friend
+Sense LeftAhead 1095 15 Friend
 Sense Ahead 21 17 Home
-Sense RightAhead 18 19 Marker 0
+Sense RightAhead 18 19 Marker 4
 Move 1068 19
-Sense LeftAhead 20 28 Marker 0
+Sense LeftAhead 20 28 Marker 4
 Move 1077 21
 PickUp 22 22
 PickUp 23 23
 PickUp 24 24
-Sense RightAhead 25 26 Marker 0
-Move 1104 26
-Sense LeftAhead 27 28 Marker 0
-Move 1104 28
+Sense RightAhead 25 26 Marker 4
+Move 1086 26
+Sense LeftAhead 27 28 Marker 4
+Move 1086 28
 Flip 3 690 29
 Flip 2 708 730
 PickUp 31 31
@@ -1084,7 +1084,7 @@ Move 1083 1082
 Turn Left 1084
 Turn Left 1085
 Turn Left 1077
-Sense LeftAhead 1086 1087 Friend
+Sense Ahead 1086 1087 Friend
 Move 1088 1087
 Turn Left 1089
 Turn Left 1090
@@ -1093,42 +1093,25 @@ Move 1092 1091
 Turn Left 1093
 Turn Left 1094
 Turn Left 1086
-Sense RightAhead 1095 1096 Friend
+Sense LeftAhead 1095 1096 Friend
 Move 1097 1096
-Turn Left 1098
-Turn Left 1099
+Move 1098 1097
+PickUp 1099 1099
 Turn Left 1100
-Move 1101 1100
+Turn Left 1101
 Turn Left 1102
-Turn Left 1103
-Turn Left 1095
-Sense Ahead 1104 1105 Friend
-Move 1106 1105
+Move 1103 1102
+Drop 1104
+Turn Left 1105
+Turn Left 1106
 Turn Left 1107
-Turn Left 1108
+Sense Ahead 1097 1108 Food
 Turn Left 1109
-Move 1110 1109
+Turn Left 1110
 Turn Left 1111
-Turn Left 1112
-Turn Left 1104
-Sense LeftAhead 1113 1114 Friend
-Move 1115 1114
-Move 1116 1115
-PickUp 1117 1117
-Turn Left 1118
-Turn Left 1119
-Turn Left 1120
-Move 1121 1120
-Drop 1122
-Turn Left 1123
-Turn Left 1124
-Turn Left 1125
-Sense Ahead 1115 1126 Food
-Turn Left 1127
-Turn Left 1128
-Turn Left 1129
-Move 1130 1129
-Turn Left 1131
-Turn Left 1132
+Move 1112 1111
 Turn Left 1113
-Sense Ahead 1115 1126 Food
+Turn Left 1114
+Turn Left 1095
+Sense Ahead 1097 1108 Food
+Turn Left 1116

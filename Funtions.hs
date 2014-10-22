@@ -29,10 +29,9 @@ main =
                 searchFoodDef
                 (guardEntrance RightAhead)
                 (guardEntrance LeftAhead)
-                (guardEntrance' LeftAhead)
-                (guardEntrance' RightAhead)
                 (guardEntrance' Ahead)
                 guardEntrance''
+                repositionFood
         writeFile "pathFollowing2.ant" code
         
 -- | Assigns random roles to ants, the list must be length 2 or larger, every antstate in the list has the same chance of being selected
@@ -184,46 +183,38 @@ turnN :: Int -> AntState -> Code
 turnN n st | n > 0     = define "turnN" [mkParam n, mkParam st] $ turn R (call "turnN" [mkParam (n - 1), mkParam st])
            | n < 0     = define "turnN" [mkParam n, mkParam st] $ turn L (call "turnN" [mkParam (n + 1), mkParam st])
            | otherwise = addLabel "turnN" [mkParam 0, mkParam st] st
-        
+
         
 defendHome :: Code
 defendHome = annotate "defendHome" $ combine
     (sense Ahead (jump "step1") next Home)
     (sense LeftAhead (jump "step1") next Home)
     (sense RightAhead (jump "step1") next Home)
-    (mark 0 next)
+    (mark 4 next)
     (move (jump "start") (jump "start"))
     (annotate "step1" $ combine
-        (pickUp next next)
-        (pickUp next next)
-        (pickUp next next) 
-        (pickUp next next) -- Wait untill the first marker is dropped
-        (sense Ahead next (jump "step2") (Marker 0))  
-        (mark 0 next)
-        (pickUp next next)
-        (pickUp next next)
-        (pickUp next next)
-        (pickUp next next)
+        (combineList $ replicate 4 (pickUp next next))  -- Wait untill the first marker is dropped
+        (sense Ahead next (jump "step2") (Marker 4))  
+        (mark 4 next)
+        (combineList $ replicate 4 (pickUp next next))
         (sense LeftAhead (jump "guardEntrance''") this Friend)
     )
     (annotate "step2" $ combine
         (sense Ahead (jump "step4") next Home)
-        (sense RightAhead next (jump "step3") (Marker 0))
+        (sense RightAhead next (jump "step3") (Marker 4))
         (move (call "guardEntrance" [mkParam RightAhead]) next)
     )
     (annotate "step3" $ combine
-        (sense LeftAhead next (jump "start") (Marker 0))
+        (sense LeftAhead next (jump "start") (Marker 4))
         (move (call "guardEntrance" [mkParam LeftAhead]) next)     
     )
     (annotate "step4" $ combine
-        (pickUp next next)
-        (pickUp next next)
-        (pickUp next next) -- Wait to make sure the second marker has been droppd
-        (sense RightAhead next (jump "step5") (Marker 0))
+        (combineList $ replicate 3 (pickUp next next)) -- Wait to make sure the second marker has been droppd
+        (sense RightAhead next (jump "step5") (Marker 4))
         (move (call "guardEntrance'" [mkParam Ahead]) next)
     )
     (annotate "step5" $ combine
-        (sense LeftAhead next (jump "start") (Marker 0))
+        (sense LeftAhead next (jump "start") (Marker 4))
         (move (call "guardEntrance'" [mkParam Ahead]) next)
     )
 
@@ -232,9 +223,7 @@ guardEntrance :: SenseDir -> Code
 guardEntrance s = define "guardEntrance" [mkParam s] $ combine
     (sense s next this Foe)
     (move next this)
-    (turn L next)
-    (turn L next)
-    (turn L next)
+    (combineList $ replicate 3 (turn L next))
     (move next this)
     (turn L next)
     (turn L next)
@@ -245,9 +234,7 @@ guardEntrance' :: SenseDir -> Code
 guardEntrance' s = define "guardEntrance'" [mkParam s] $ combine
     (sense s this next Friend)
     (move next this)
-    (turn L next)
-    (turn L next)
-    (turn L next)
+    (combineList $ replicate 3 (turn L next))
     (move next this)
     (turn L next)
     (turn L next)
@@ -261,20 +248,14 @@ guardEntrance'' = annotate "guardEntrance''" $ combine
     (annotate "collectKill" $ combine
         (move next this)
         (pickUp next next)
-        (turn L next)
-        (turn L next)
-        (turn L next)
+        (combineList $ replicate 3 (turn L next))
         (move next this)
         (dropFood next)
-        (turn L next)
-        (turn L next)
-        (turn L next)
+        (combineList $ replicate 3 (turn L next))
         (sense Ahead (jump "collectKill") (jump "returnToPosition") Food)  
     )
     (annotate "returnToPosition" $ combine
-        (turn L next)
-        (turn L next)
-        (turn L next)
+        (combineList $ replicate 3 (turn L next))
         (move next this)
         (turn L next)
         (turn L next)
@@ -282,11 +263,9 @@ guardEntrance'' = annotate "guardEntrance''" $ combine
     )
     (sense Ahead (jump "collectKill") (jump "returnToPosition") Food)
 
-    
+repositionFood :: Code
+repositionFood = annotate "repositionFood" $ combine
+    (turn L this)
 
--- Wait for n turns
---wait :: Int -> Code
---wait n = define "wait" [mkParam n] $ combine
-    
 
 
