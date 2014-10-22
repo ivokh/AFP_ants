@@ -86,7 +86,11 @@ takeAndGoHomeDef = combineList [takeAndGoHome facing | facing <- [0..5]]
 -- | Pick up food and go home    
 takeAndGoHome :: Dir -> Code
 takeAndGoHome facing = define "takeAndGoHome" [mkParam facing] $ combine
-    (pickUp next next) --Todo: leave foodgone marker and start searching again if pickup fails
+    --If pickup fails, go search, otherwise go home
+    (pickUp (relative 3) next)
+    (unMark foodPath next)
+    (mark foodGone (call "searchFood" [mkParam facing, mkParam facing]))
+    --Pickup succesful: go home
     (mark foodPath next)
     (unMark foodGone next)
     (combineList (replicate 2 (turn L next)))
@@ -168,10 +172,6 @@ detectPath facing = define "detectPath" [mkParam facing] $ combine
     (search RightAhead next ((facing + 3) `mod` 6))
     --Start cleaning up the trail if it's realy gone
     (mark foodGone (call "searchHome" [mkParam ((facing + 3) `mod` 6), mkParam UnmarkPath]))
-    
-    --TODO: Search the neighborhood for food
-    --TODO: (zowel foodpath als homepath moeten uitgebreid worden tijdens het in de buurt zoeken)
-    
     --Helper function
     (define "move" [mkParam facing, mkParam Ahead] $ tryMove facing (call "followToFood" [mkParam facing]))
     (define "move" [mkParam facing, mkParam LeftAhead] $ turn L (call "move" [mkParam ((facing - 1) `mod` 6), mkParam Ahead]))
