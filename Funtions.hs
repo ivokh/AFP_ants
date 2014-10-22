@@ -242,7 +242,7 @@ defendHome = annotate "defendHome" $ combine
 -- For the two ants at the front of the defending formation
 guardEntrance :: SenseDir -> Code
 guardEntrance s = define "guardEntrance" [mkParam s] $ combine
-    (sense s next this Foe)
+    (sense s this this Foe)
     (move next this)
     (combineList $ replicate 3 (turn L next))
     (move next this)
