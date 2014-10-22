@@ -122,6 +122,7 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
         where --If the path can be followed, keep leaving marks
               follow n st = sense Here (call "turnN" [mkParam $ shortestTurn (n - facing), mkParam $ call "searchHome" [mkParam n, mkParam leaveMark]]) st (Marker n)
               --If moving fails, pick a random direction and try to find another path there, otherwise go to next
+              tryMove :: Dir -> Code
               tryMove facing = combine
                   (move (relative 10) next)
                   (toss 2 next (relative 2))

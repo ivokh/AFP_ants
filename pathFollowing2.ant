@@ -64,18 +64,18 @@ Unmark 4 63
 Turn Left 64
 Turn Left 65
 Turn Left 182
-Move 76 67
-Flip 2 68 69
+Mark 2 67
+Unmark 4 68
+Move 78 69
 Flip 2 70 71
-Flip 2 72 74
+Flip 2 72 73
+Flip 2 74 76
 Turn Left 396
 Turn Right 164
-Turn Left 73
+Turn Left 75
 Turn Left 338
-Turn Right 75
+Turn Right 77
 Turn Right 222
-Mark 2 77
-Unmark 4 78
 Sense Here 79 83 Home
 Drop 80
 Turn Left 81
@@ -84,18 +84,18 @@ Turn Left 912
 Sense Here 435 84 Marker 1
 Sense Here 473 85 Marker 3
 Sense Here 506 106 Marker 5
-Move 96 87
-Flip 2 88 89
+Unmark 2 87
+Mark 4 88
+Move 98 89
 Flip 2 90 91
-Flip 2 92 94
+Flip 2 92 93
+Flip 2 94 96
 Turn Left 396
 Turn Right 164
-Turn Left 93
+Turn Left 95
 Turn Left 338
-Turn Right 95
+Turn Right 97
 Turn Right 222
-Unmark 2 97
-Mark 4 98
 Sense Here 99 103 Home
 Drop 100
 Turn Left 101
@@ -122,18 +122,18 @@ Turn Left 912
 Sense Here 447 122 Marker 1
 Sense Here 485 123 Marker 3
 Sense Here 518 106 Marker 5
-Move 134 125
-Flip 2 126 127
+Mark 2 125
+Unmark 4 126
+Move 136 127
 Flip 2 128 129
-Flip 2 130 132
+Flip 2 130 131
+Flip 2 132 134
 Turn Left 106
 Turn Right 222
-Turn Left 131
+Turn Left 133
 Turn Left 396
-Turn Right 133
+Turn Right 135
 Turn Right 280
-Mark 2 135
-Unmark 4 136
 Sense Here 137 141 Home
 Drop 138
 Turn Left 139
@@ -142,18 +142,18 @@ Turn Left 986
 Sense Here 124 142 Marker 1
 Sense Here 472 143 Marker 3
 Sense Here 505 164 Marker 5
-Move 154 145
-Flip 2 146 147
+Unmark 2 145
+Mark 4 146
+Move 156 147
 Flip 2 148 149
-Flip 2 150 152
+Flip 2 150 151
+Flip 2 152 154
 Turn Left 106
 Turn Right 222
-Turn Left 151
+Turn Left 153
 Turn Left 396
-Turn Right 153
+Turn Right 155
 Turn Right 280
-Unmark 2 155
-Mark 4 156
 Sense Here 157 161 Home
 Drop 158
 Turn Left 159
@@ -180,18 +180,18 @@ Turn Left 986
 Sense Here 164 180 Marker 1
 Sense Here 484 181 Marker 3
 Sense Here 517 164 Marker 5
-Move 192 183
-Flip 2 184 185
+Mark 2 183
+Unmark 4 184
+Move 194 185
 Flip 2 186 187
-Flip 2 188 190
+Flip 2 188 189
+Flip 2 190 192
 Turn Left 164
 Turn Right 280
-Turn Left 189
+Turn Left 191
 Turn Left 106
-Turn Right 191
+Turn Right 193
 Turn Right 338
-Mark 2 193
-Unmark 4 194
 Sense Here 195 199 Home
 Drop 196
 Turn Left 197
@@ -200,18 +200,18 @@ Turn Left 1058
 Sense Here 434 200 Marker 1
 Sense Here 471 201 Marker 3
 Sense Here 509 222 Marker 5
-Move 212 203
-Flip 2 204 205
+Unmark 2 203
+Mark 4 204
+Move 214 205
 Flip 2 206 207
-Flip 2 208 210
+Flip 2 208 209
+Flip 2 210 212
 Turn Left 164
 Turn Right 280
-Turn Left 209
+Turn Left 211
 Turn Left 106
-Turn Right 211
+Turn Right 213
 Turn Right 338
-Unmark 2 213
-Mark 4 214
 Sense Here 215 219 Home
 Drop 216
 Turn Left 217
@@ -238,18 +238,18 @@ Turn Left 1058
 Sense Here 446 238 Marker 1
 Sense Here 483 239 Marker 3
 Sense Here 521 222 Marker 5
-Move 250 241
-Flip 2 242 243
+Mark 2 241
+Unmark 4 242
+Move 252 243
 Flip 2 244 245
-Flip 2 246 248
+Flip 2 246 247
+Flip 2 248 250
 Turn Left 222
 Turn Right 338
-Turn Left 247
+Turn Left 249
 Turn Left 164
-Turn Right 249
+Turn Right 251
 Turn Right 396
-Mark 2 251
-Unmark 4 252
 Sense Here 253 257 Home
 Drop 254
 Turn Left 255
@@ -258,18 +258,18 @@ Turn Left 690
 Sense Here 433 258 Marker 1
 Sense Here 240 259 Marker 3
 Sense Here 508 280 Marker 5
-Move 270 261
-Flip 2 262 263
+Unmark 2 261
+Mark 4 262
+Move 272 263
 Flip 2 264 265
-Flip 2 266 268
+Flip 2 266 267
+Flip 2 268 270
 Turn Left 222
 Turn Right 338
-Turn Left 267
+Turn Left 269
 Turn Left 164
-Turn Right 269
+Turn Right 271
 Turn Right 396
-Unmark 2 271
-Mark 4 272
 Sense Here 273 277 Home
 Drop 274
 Turn Left 275
@@ -296,18 +296,18 @@ Turn Left 690
 Sense Here 445 296 Marker 1
 Sense Here 280 297 Marker 3
 Sense Here 520 280 Marker 5
-Move 308 299
-Flip 2 300 301
+Mark 2 299
+Unmark 4 300
+Move 310 301
 Flip 2 302 303
-Flip 2 304 306
+Flip 2 304 305
+Flip 2 306 308
 Turn Left 280
 Turn Right 396
-Turn Left 305
+Turn Left 307
 Turn Left 222
-Turn Right 307
+Turn Right 309
 Turn Right 106
-Mark 2 309
-Unmark 4 310
 Sense Here 311 315 Home
 Drop 312
 Turn Left 313
@@ -316,18 +316,18 @@ Turn Left 762
 Sense Here 437 316 Marker 1
 Sense Here 470 317 Marker 3
 Sense Here 507 338 Marker 5
-Move 328 319
-Flip 2 320 321
+Unmark 2 319
+Mark 4 320
+Move 330 321
 Flip 2 322 323
-Flip 2 324 326
+Flip 2 324 325
+Flip 2 326 328
 Turn Left 280
 Turn Right 396
-Turn Left 325
+Turn Left 327
 Turn Left 222
-Turn Right 327
+Turn Right 329
 Turn Right 106
-Unmark 2 329
-Mark 4 330
 Sense Here 331 335 Home
 Drop 332
 Turn Left 333
@@ -354,18 +354,18 @@ Turn Left 762
 Sense Here 449 354 Marker 1
 Sense Here 482 355 Marker 3
 Sense Here 519 338 Marker 5
-Move 366 357
-Flip 2 358 359
+Mark 2 357
+Unmark 4 358
+Move 368 359
 Flip 2 360 361
-Flip 2 362 364
+Flip 2 362 363
+Flip 2 364 366
 Turn Left 338
 Turn Right 106
-Turn Left 363
+Turn Left 365
 Turn Left 280
-Turn Right 365
+Turn Right 367
 Turn Right 164
-Mark 2 367
-Unmark 4 368
 Sense Here 369 373 Home
 Drop 370
 Turn Left 371
@@ -374,18 +374,18 @@ Turn Left 838
 Sense Here 436 374 Marker 1
 Sense Here 469 375 Marker 3
 Sense Here 356 396 Marker 5
-Move 386 377
-Flip 2 378 379
+Unmark 2 377
+Mark 4 378
+Move 388 379
 Flip 2 380 381
-Flip 2 382 384
+Flip 2 382 383
+Flip 2 384 386
 Turn Left 338
 Turn Right 106
-Turn Left 383
+Turn Left 385
 Turn Left 280
-Turn Right 385
+Turn Right 387
 Turn Right 164
-Unmark 2 387
-Mark 4 388
 Sense Here 389 393 Home
 Drop 390
 Turn Left 391
