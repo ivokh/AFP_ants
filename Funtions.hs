@@ -171,9 +171,11 @@ detectPath facing = define "detectPath" [mkParam facing] $ combine
     --TODO: (zowel foodpath als homepath moeten uitgebreid worden tijdens het in de buurt zoeken)
     
     --Helper function
-    (define "move" [mkParam facing] $ move (call "followToFood" [mkParam facing]) (call "detectPath" [mkParam facing]))
+    (define "move" [mkParam facing, mkParam Ahead] $ move (call "followToFood" [mkParam facing]) (call "detectPath" [mkParam facing]))
+    (define "move" [mkParam facing, mkParam LeftAhead] $ turn L (call "move" [mkParam ((facing - 1) `mod` 6), mkParam Ahead]))
+    (define "move" [mkParam facing, mkParam RightAhead] $ turn R (call "move" [mkParam ((facing + 1) `mod` 6), mkParam Ahead]))
         where search :: SenseDir -> AntState -> Dir -> Code
-              search x st facing = combine (sense x (call "searchFood" [mkParam facing, mkParam facing]) next foodGoneCond) (sense x (call "move" [mkParam facing]) st foodPathCond)
+              search x st facing = combine (sense x (call "searchFood" [mkParam facing, mkParam facing]) next foodGoneCond) (sense x (call "move" [mkParam facing, mkParam x]) st foodPathCond)
         
 -- | Defines turnN for all legitimate parameters, given the next state
 turnNDef :: AntState -> Code
