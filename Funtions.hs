@@ -27,10 +27,7 @@ main =
                 searchHomeDef
                 followToFoodDef
                 searchFoodDef
-                (guardEntrance RightAhead)
-                (guardEntrance LeftAhead)
-                (guardEntrance' Ahead)
-                guardEntrance''
+                defendFood
                 repositionFoodInit
                 repositionFood
         writeFile "pathFollowing2.ant" code
@@ -210,78 +207,45 @@ defendHome = annotate "defendHome" $ combine
     (sense Ahead (jump "step1") next Home)
     (sense LeftAhead (jump "step1") next Home)
     (sense RightAhead (jump "step1") next Home)
-    (mark 4 (jump "start"))
+    (mark 4 next)
+    (move next this)
+    (move next this)
+    (move (jump "start") (jump "start"))
     (annotate "step1" $ combine
         (combineList $ replicate 4 (pickUp next next))  -- Wait untill the first marker is dropped
         (sense Ahead next (jump "step2") (Marker 4))  
         (mark 4 next)
         (combineList $ replicate 4 (pickUp next next))
-        (sense LeftAhead (jump "guardEntrance''") this Friend)
+        (sense LeftAhead (jump "defendFood") this Friend)
     )       
     (annotate "step2" $ combine
         (sense Ahead (jump "step4") next Home)
         (sense RightAhead next (jump "step3") (Marker 4))
-        (move (call "guardEntrance" [mkParam RightAhead]) next)
+        (move next next)
+        (pickUp this this)
     )
     (annotate "step3" $ combine
         (sense LeftAhead next (jump "repositionFoodInit") (Marker 4))
-        (move (call "guardEntrance" [mkParam LeftAhead]) next)     
+        (move next next)
+        (pickUp this this)
     )
     (annotate "step4" $ combine
         (combineList $ replicate 3 (pickUp next next)) -- Wait to make sure the second marker has been droppd
         (sense RightAhead next (jump "step5") (Marker 4))
+        (combineList $ replicate 4 (pickUp next next))        
         (mark 4 next)
-        (move (call "guardEntrance'" [mkParam Ahead]) next)
+        (move next next)
+        (pickUp this this)
     )
     (annotate "step5" $ combine
         (sense LeftAhead next (jump "repositionFoodInit") (Marker 4))
         (mark 4 next)
-        (move (call "guardEntrance'" [mkParam Ahead]) next)
+        (move next this)
+        (pickUp this this)
     )
 
--- For the two ants at the front of the defending formation
-guardEntrance :: SenseDir -> Code
-guardEntrance s = define "guardEntrance" [mkParam s] $ combine
-    (sense s this this Foe)
-    (move next this)
-    (combineList $ replicate 3 (turn L next))
-    (move next this)
-    (combineList $ replicate 2 (turn L next))
-    (turn L (call "guardEntrance" [mkParam s]))
-
--- For the two ants behind the two frontal ants
-guardEntrance' :: SenseDir -> Code
-guardEntrance' s = define "guardEntrance'" [mkParam s] $ combine
-    (sense s this next Friend)
-    (move next this)
-    (combineList $ replicate 3 (turn L next))
-    (move next this)
-    (combineList $ replicate 2 (turn L next))
-    (turn L (call "guardEntrance'" [mkParam s]))
-
---guardEntrance'' :: Code
---guardEntrance'' = annotate "guardEntrance''" $ combine
---    -- Move forward one step when the ants in front of this one also move
---    (sense LeftAhead this next Friend)
---    (move next this)
---    (annotate "collectKill" $ combine
---        (move next this)
---        (pickUp next next)
---        (combineList $ replicate 3 (turn L next))
---        (move next this)
---        (dropFood next)
---        (combineList $ replicate 3 (turn L next))
---        (sense Ahead (jump "collectKill") (jump "returnToPosition") Food)  
---    )
---    (annotate "returnToPosition" $ combine
---        (combineList $ replicate 3 (turn L next))
---        (move next this)
---        (combineList $ replicate 2 (turn L next))
---        (turn L (jump "guardEntrance''"))
---    )
---    (sense Ahead (jump "collectKill") (jump "returnToPosition") Food)
-guardEntrance'' :: Code
-guardEntrance'' = annotate "guardEntrance''" $ combine
+defendFood :: Code
+defendFood = annotate "defendFood" $ combine
     (combineList $ replicate 3 (turn L next))
     (sense Ahead (jump "collectFood") this Food)
     (annotate "collectFood" $ combine 
@@ -293,8 +257,6 @@ guardEntrance'' = annotate "guardEntrance''" $ combine
         (combineList $ replicate 3 (turn L next))
         (sense Ahead (jump "collectFood") this Food)
     )
-
-
 
 repositionFoodInit :: Code
 repositionFoodInit = annotate "repositionFoodInit" $ combine
@@ -316,9 +278,8 @@ repositionFood = annotate "repositionFood" $ combine
     )
     (annotate "rotate" $ combine
         (sense Ahead next (jump "repositionFood") Home)
+        (sense LeftAhead (jump "obstacle") next (Marker 4))
         (pickUp next next)
-        (move (jump "rotate") next)
-        (move (jump "rotate") next)
-        (sense LeftAhead (jump "obstacle") (jump "rotate") (Marker 4))
+        (move (jump "rotate") this)
     )
 
