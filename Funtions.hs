@@ -30,7 +30,8 @@ main =
                 defendFood
                 repositionFoodInit
                 repositionFood
-        writeFile "pathFollowing3.ant" code
+                findDropPlace
+        writeFile "pathFollowing2.ant" code
         
 -- | Assigns random roles to ants, the list must be length 2 or larger, every antstate in the list has the same chance of being selected
 assignRandom :: [AntState] -> Code
@@ -126,10 +127,7 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
     --When cleaning a path, let other ants know so they move out of the way, and keep trying to move. Otherwise other ants have priority
     (tryMove facing)
     --If moving was succesful, sense if at home
-    (sense Here next (relative 5) Home)
-    (dropFood next)
-    (combineList (replicate 2 (turn L next)))
-    (turn L (call "searchFood" [mkParam NoTurn, mkParam ((facing + 3) `mod` 6), mkParam ((facing + 3) `mod` 6)]))
+    (sense Ahead (jump "findDropPlace") next Home)
     --If not at home, sense a path
     (follow 1 next)
     (follow 3 next)
@@ -150,6 +148,77 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
                   (turn L (call "searchHome" [mkParam ((facing - 2) `mod` 6), mkParam DoNothing]))
                   (turn R next)
                   (turn R (call "searchHome" [mkParam ((facing + 2) `mod` 6), mkParam DoNothing]))
+
+{-
+ - Find the place to drop food.
+ - - => home tile.
+ - . => not home tile.
+ - G => guard
+ - M => drop place
+ - n => positions 1 - 4
+ -
+ -    - - - .
+ -   - - - + +
+ -  - - - + M 4
+ -   - - - + + 3
+ -    - - - 1 2
+ -
+ -    - - - .
+ -   - - - + +
+ -  - - - + M .
+ -   - - - + + .
+ -    - - - * 3
+ -   - - - 1 2
+ -
+ -}
+findDropPlace :: Code
+findDropPlace = annotate "findDropPlace" $ combine
+    -- Check if not already inside home
+    (sense Here next (jump "startFindDropPlace") Home)
+    (annotate "getOutOfHome" (move (relative 4) next))
+    (move (relative 3) next)
+    (move (relative 2) next)
+    (turn L (relative (-3)))
+    (sense Here (relative (-4)) next Home)
+    (sense Ahead (jump "startFindDropPlace") next Home)
+    (turn L (relative (-1)))
+    -- Turn to align with the home edge.
+    (annotate "startFindDropPlace" (sense Here (jump "getOutOfHome") next Home))
+    (turn R next)
+    (sense Ahead (relative (-1)) next Home)
+    -- Move beside the home edge until an friend in found
+    (move next (relative 3))
+    (annotate "moveToDropPlace" (sense LeftAhead (relative (-1)) next Home))
+    (turn L (relative (-2)))
+    -- Move around friend
+    -- position 1
+    (turn R next)
+    tryMove
+    -- position 2
+    (turn L next)
+    tryMove
+    -- position 3
+    (turn L next)
+    (sense Ahead next (relative 2) Friend) -- not there jet
+    (turn R (relative (-3)))
+    tryMove
+    -- position 4
+    (sense Ahead (relative 3) next Friend)
+    (sense Ahead next (jump "moveToDropPlace") Home)
+    (turn R (relative (-1)))
+    (turn L next)
+    --
+    (move next this)
+    (dropFood next)
+    (move next this)
+    (combineList $ replicate 3 (turn L next))
+    (sense Here (jump "guardEntrance''") (jump "guardEntrance''") Friend)
+    where tryMove :: Code
+          tryMove = combine
+           (move (relative 3) next)
+           (move (relative 2) next)
+           (move next (call "searchHome" [mkParam 0, mkParam DoNothing]))
+        
     
 -- | Defines followToFood
 followToFoodDef :: Code
@@ -216,33 +285,66 @@ turnN n st | n > 0     = define "turnN" [mkParam n, mkParam st] $ turn R (call "
            | otherwise = addLabel "turnN" [mkParam 0, mkParam st] st
 
         
+{-
+ - This are the positions that will be found.
+ - - => home tile.
+ - . => not home tile.
+ - M => marker
+ -
+ -    - - 6 .
+ -   - - 2 3 .
+ -  - - - 1 M .
+ -   - - 4 5 .
+ -    - - 7 .
+ - 
+ - This is the formation the ant will get in by moving ants 2, 3, 4 and 5.
+ -    - - 6 .
+ -   - - - 2 3
+ -  - - - 1 M .
+ -   - - - 4 5
+ -    - - 7 .
+ -
+ -}
 defendHome :: Code
 defendHome = annotate "defendHome" $ combine
+    -- Find most right ant and place marker, all other ants go to step1.
     (sense Ahead (jump "step1") next Home)
     (sense LeftAhead (jump "step1") next Home)
     (sense RightAhead (jump "step1") next Home)
-    (mark 4 next)
-    (move next this)
-    (move next this)
-    (move (jump "start") (jump "start"))
+    (mark 4 (jump "start"))
+    -- Find ant at position 1, mark that position and change state of that ant
+    -- to guardEntrance''. All other ants go to step2.
     (annotate "step1" $ combine
         (combineList $ replicate 4 (pickUp next next))  -- Wait untill the first marker is dropped
         (sense Ahead next (jump "step2") (Marker 4))  
         (mark 4 next)
         (combineList $ replicate 4 (pickUp next next))
-        (sense LeftAhead (jump "defendFood") this Friend)
-    )       
+        (sense LeftAhead (jump "guardEntrance''") this Friend)
+    )
+    -- Find ants at the right border of the home and in the row above the
+    -- markers (position 3). Change the state of that ant to guardEntrance
+    -- (RightAhead). All other ants go to step4.
     (annotate "step2" $ combine
         (sense Ahead (jump "step4") next Home)
         (sense RightAhead next (jump "step3") (Marker 4))
         (move next next)
         (pickUp this this)
     )
+    -- Find ants at the right border of the home and in the row below the
+    -- markers (position 5). Change the state of that ant to guardEntrance
+    -- (RightAhead). All other ants go to repositionFoodInit.
     (annotate "step3" $ combine
-        (sense LeftAhead next (jump "repositionFoodInit") (Marker 4))
-        (move next next)
-        (pickUp this this)
+        --(sense LeftAhead next (jump "repositionFoodInit") (Marker 4))
+        --(sense LeftAhead next (jump "start") (Marker 4))
+        (sense LeftAhead (relative 23) next (Marker 4))
+        -- lock ants at positions 6 and 7.
+        (combineList $ replicate 7 (senseMarker))
+        (turn L (jump "start"))
+        (move (call "guardEntrance" [mkParam LeftAhead]) next)     
     )
+    -- Ants not at the right border of the home.
+    -- Find ant at position 2 and set its state to guardEntrance' (Ahead).
+    -- All other ants go to step5.
     (annotate "step4" $ combine
         (combineList $ replicate 3 (pickUp next next)) -- Wait to make sure the second marker has been droppd
         (sense RightAhead next (jump "step5") (Marker 4))
@@ -251,26 +353,65 @@ defendHome = annotate "defendHome" $ combine
         (move next next)
         (pickUp this this)
     )
+    -- Find ant at position 4 and set its state to guardEntrance' (Ahead).
+    -- All other ants go to step5.
     (annotate "step5" $ combine
-        (sense LeftAhead next (jump "repositionFoodInit") (Marker 4))
+        --(sense LeftAhead next (jump "repositionFoodInit") (Marker 4))
+        (sense LeftAhead next (jump "start") (Marker 4))
         (mark 4 next)
-        (move next this)
-        (pickUp this this)
+        (move (call "guardEntrance'" [mkParam Ahead]) (jump "start"))
     )
+         where senseMarker :: Code
+               senseMarker = combine
+                (turn L next)
+                (sense LeftAhead next (relative 2) (Marker 4))
+                (turn R this)
 
-defendFood :: Code
-defendFood = annotate "defendFood" $ combine
+-- For the two ants at the front of the defending formation.
+-- Positions 3 and 5.
+guardEntrance :: SenseDir -> Code
+guardEntrance s = define "guardEntrance" [mkParam s] $ combine
+    (sense s next this Foe)
+    (combineList $ replicate 24 (turn L next))
+    (move (jump "succesFullMove") next)
+    -- failedMove
+    (combineList $ replicate 5 (turn L next))
+    (combineList $ replicate 32 (dropFood next))  -- useless move, just to synchronise with other guards
+    (turn L (call "guardEntrance" [mkParam s]))
+    -- succesFullMove
+    (annotate "succesFullMove" (combineList $ replicate 3 (turn L next)))
+    (move next this)
+    (combineList $ replicate 2 (turn L next))
+    (turn L (call "guardEntrance" [mkParam s]))
+
+-- For the two ants behind the two frontal ants
+guardEntrance' :: SenseDir -> Code
+guardEntrance' s = define "guardEntrance'" [mkParam s] $ combine
+    (sense s this next Friend)
+    (move next (call "guardEntrance'" [mkParam s]))
     (combineList $ replicate 3 (turn L next))
-    (sense Ahead (jump "collectFood") this Food)
-    (annotate "collectFood" $ combine 
-        (move next this)
-        (pickUp next next)
-        (combineList $ replicate 3 (turn L next))
-        (move next this)
-        (dropFood next)
-        (combineList $ replicate 3 (turn L next))
-        (sense Ahead (jump "collectFood") this Food)
-    )
+    (move next this)
+    (combineList $ replicate 2 (turn L next))
+    (turn L (call "guardEntrance'" [mkParam s]))
+
+guardEntrance'' :: Code
+guardEntrance'' = annotate "guardEntrance''" $ combine
+    (combineList $ replicate 4 (pickUp next next))
+    (annotate "attack" (sense LeftAhead (jump "makeRoom") next Friend))
+    (move (relative 4) next)
+    -- move is not possible, only rotate back, don't move back
+    (combineList $ replicate 2 (turn L next))
+    (turn L (relative 5))
+    -- move was possible, rotate and move back
+    (combineList $ replicate 3 (turn L next))
+    (move next this)
+    --
+    (combineList $ replicate 3 (turn L next))
+    --
+    (annotate "makeRoom" (sense Ahead next (jump "attack") Friend))
+    (combineList $ replicate 4 (pickUp next next))
+    (combineList $ replicate 3 (turn L next))
+    (move (jump "start") (jump "start"))
 
 repositionFoodInit :: Code
 repositionFoodInit = annotate "repositionFoodInit" $ combine
