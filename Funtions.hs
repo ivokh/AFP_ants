@@ -27,10 +27,13 @@ main =
                 searchHomeDef
                 followToFoodDef
                 searchFoodDef
-                defendFood
                 repositionFoodInit
                 repositionFood
                 findDropPlace
+                (guardEntrance RightAhead)
+                (guardEntrance LeftAhead)
+                (guardEntrance' Ahead)
+                guardEntrance''
         writeFile "pathFollowing2.ant" code
         
 -- | Assigns random roles to ants, the list must be length 2 or larger, every antstate in the list has the same chance of being selected
@@ -442,7 +445,7 @@ defendHome = annotate "defendHome" $ combine
         (sense LeftAhead (relative 23) next (Marker 4))
         -- lock ants at positions 6 and 7.
         (combineList $ replicate 7 (senseMarker))
-        (turn L (call "searchFood" [mkParam 4, mkParam 4]))
+        (turn L (call "searchFood" [mkParam NoTurn, mkParam 4, mkParam 4]))
         (move (call "guardEntrance" [mkParam LeftAhead]) next)     
     )
     -- Ants not at the right border of the home.
@@ -514,7 +517,7 @@ guardEntrance'' = annotate "guardEntrance''" $ combine
     (annotate "makeRoom" (sense Ahead next (jump "attack") Friend))
     (combineList $ replicate 4 (pickUp next next))
     (combineList $ replicate 3 (turn L next))
-    (move (call "searchFood" [mkParam 3, mkParam 2]) (call "searchFood" [mkParam 3, mkParam 2]))
+    (move (call "searchFood" [mkParam NoTurn, mkParam 3, mkParam 2]) (call "searchFood" [mkParam NoTurn, mkParam 3, mkParam 2]))
 
 repositionFoodInit :: Code
 repositionFoodInit = annotate "repositionFoodInit" $ combine
