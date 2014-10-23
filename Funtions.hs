@@ -21,7 +21,7 @@ main =
         let code = unlines . map show . runCode $ combine
                 defendHome
                 --Start with assigning roles
-                (annotate "start" (assignRandom [call "searchFood" [mkParam 0, mkParam dir] | dir <- [0, 2, 4]]))
+                (annotate "start" (assignRandom [call "searchFood" [mkParam NoTurn, mkParam 0, mkParam dir] | dir <- [0, 2, 4]]))
                 --All other code comes here (note that all states have the same properties, except for state 1 where execution starts)
                 takeAndGoHomeDef
                 searchHomeDef
@@ -30,7 +30,7 @@ main =
                 defendFood
                 repositionFoodInit
                 repositionFood
-        writeFile "pathFollowing2.ant" code
+        writeFile "pathFollowing3.ant" code
         
 -- | Assigns random roles to ants, the list must be length 2 or larger, every antstate in the list has the same chance of being selected
 assignRandom :: [AntState] -> Code
@@ -40,12 +40,15 @@ assignRandom xs = assignRandom' (length xs) xs where
 
 -- | Defines searchFood for all legitimate parameters
 searchFoodDef :: Code
-searchFoodDef = combineList [searchFood facing dest | facing <- [0..5], dest <- [0..5]]
+searchFoodDef = combineList [searchFood turn facing dest | facing <- [0..5], dest <- [0..5], turn <- [LeftTurn, RightTurn, NoTurn]]
+
+data LastTurn = LeftTurn | RightTurn | NoTurn
+    deriving (Eq, Show)
 
 --TODO: change direction a bit every now and them
 -- | Searches for food given the dir it's facing (this should be even!) and the (even) dir it should go, and leaves a trail that can be followed home
-searchFood :: Dir -> Dir -> Code
-searchFood facing dest' = define "searchFood" [mkParam facing, mkParam dest'] $ combine 
+searchFood :: LastTurn -> Dir -> Dir -> Code
+searchFood lastTurn facing dest' = define "searchFood" [mkParam lastTurn, mkParam facing, mkParam dest'] $ combine 
     --Turn to the assigned direction
     (turnN' (shortestTurn (dest - facing)))
     --Sense food
@@ -55,14 +58,25 @@ searchFood facing dest' = define "searchFood" [mkParam facing, mkParam dest'] $ 
     --Sense a path leading to food
     (sense Here (call "followToFood" [mkParam dest]) next foodPathCond)
     --If food or path wasn't found, move and leave a mark that leads to home
-    (move next (relative 5))
+    (move next (call "searchFood_" [mkParam lastTurn, mkParam facing, mkParam dest]))
     --Only leave a marker if there is no path marker already
-    (sense Here (call "searchFood" [mkParam dest, mkParam dest]) next (Marker 1))
-    (sense Here (call "searchFood" [mkParam dest, mkParam dest]) next (Marker 3))
-    (sense Here (call "searchFood" [mkParam dest, mkParam dest]) next (Marker 5))
-    (mark ((dest + 3) `mod` 6) (call "searchFood" [mkParam dest, mkParam dest]))
+    (sense Here (relative 4) next (Marker 1))
+    (sense Here (relative 3) next (Marker 3))
+    (sense Here (relative 2) next (Marker 5))
+    (mark ((dest + 3) `mod` 6) next)
+    --Sometimes, pick a new direction
+    (toss 10 next (call "searchFood" [mkParam lastTurn, mkParam dest, mkParam dest]))
+    (case lastTurn of
+       --Don't keep making the same turn!
+       LeftTurn -> (combine (turn R next) (turn R (call "searchFood" [mkParam NoTurn, mkParam ((dest + 2) `mod` 6), mkParam ((dest + 2) `mod` 6)])) :: Code)
+       RightTurn -> combine (turn L next) (turn L (call "searchFood" [mkParam NoTurn, mkParam ((dest - 2) `mod` 6), mkParam ((dest - 2) `mod` 6)]))
+       NoTurn    -> combine (toss 2 next (relative 3))
+                            (turn R next)
+                            (turn R (call "searchFood" [mkParam RightTurn, mkParam ((dest + 2) `mod` 6), mkParam ((dest + 2) `mod` 6)]))
+                            (turn L next)
+                            (turn L (call "searchFood" [mkParam LeftTurn, mkParam ((dest - 2) `mod` 6), mkParam ((dest - 2) `mod` 6)])))
     --If movement fails, pick a random new even direction
-    (toss 2 (call "searchFood" [mkParam dest, mkParam ((dest - 2) `mod` 6)]) (call "searchFood" [mkParam dest, mkParam ((dest + 2) `mod` 6)]))
+    (define "searchFood_" [mkParam lastTurn, mkParam facing, mkParam dest] $ toss 2 (call "searchFood" [mkParam NoTurn, mkParam dest, mkParam ((dest - 2) `mod` 6)]) (call "searchFood" [mkParam NoTurn, mkParam dest, mkParam ((dest + 2) `mod` 6)]))
         where
             turnN' n | n > 0     = combineList $ replicate n    (turn R next)
                      | n < 0     = combineList $ replicate (-n) (turn L next)
@@ -86,7 +100,7 @@ takeAndGoHome facing = define "takeAndGoHome" [mkParam facing] $ combine
     --If pickup fails, go search, otherwise go home
     (pickUp (relative 3) next)
     (unMark foodPath next)
-    (mark foodGone (call "searchFood" [mkParam facing, mkParam facing]))
+    (mark foodGone (call "searchFood" [mkParam NoTurn, mkParam facing, mkParam facing]))
     --Pickup succesful: go home
     (mark foodPath next)
     (unMark foodGone next)
@@ -115,7 +129,7 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
     (sense Here next (relative 5) Home)
     (dropFood next)
     (combineList (replicate 2 (turn L next)))
-    (turn L (call "searchFood" [mkParam ((facing + 3) `mod` 6), mkParam ((facing + 3) `mod` 6)]))
+    (turn L (call "searchFood" [mkParam NoTurn, mkParam ((facing + 3) `mod` 6), mkParam ((facing + 3) `mod` 6)]))
     --If not at home, sense a path
     (follow 1 next)
     (follow 3 next)
@@ -174,9 +188,9 @@ detectPath facing = define "detectPath" [mkParam facing] $ combine
     (define "move" [mkParam facing, mkParam LeftAhead] $ turn L (call "move" [mkParam ((facing - 1) `mod` 6), mkParam Ahead]))
     (define "move" [mkParam facing, mkParam RightAhead] $ turn R (call "move" [mkParam ((facing + 1) `mod` 6), mkParam Ahead]))
     --Definition of tryMove
-    (tryMove facing (call "searchFood" [mkParam facing, mkParam facing]))
+    (tryMove facing (call "searchFood" [mkParam NoTurn, mkParam facing, mkParam facing]))
         where search :: SenseDir -> AntState -> Dir -> Code
-              search x st facing = combine (sense x (call "searchFood" [mkParam facing, mkParam facing]) next foodGoneCond) (sense x (call "move" [mkParam facing, mkParam x]) st foodPathCond)
+              search x st facing = combine (sense x (call "searchFood" [mkParam NoTurn, mkParam facing, mkParam facing]) next foodGoneCond) (sense x (call "move" [mkParam facing, mkParam x]) st foodPathCond)
               --If moving fails, pick a random direction and search for food, otherwise go to st
               tryMove :: Dir -> AntState -> Code
               tryMove facing st = define "tryMove_" [mkParam facing, mkParam st] $ combine
@@ -184,12 +198,12 @@ detectPath facing = define "detectPath" [mkParam facing] $ combine
                   (toss 2 next (relative 2))
                   (toss 2 (relative 2) (relative 3))
                   (toss 2 (relative 3) (relative 5))
-                  (turn L (call "tryMove_" [mkParam ((facing - 1) `mod` 6), mkParam $ call "searchFood" (replicate 2 $ mkParam ((facing - 1) `mod` 6))]))
-                  (turn R (call "tryMove_" [mkParam ((facing + 1) `mod` 6), mkParam $ call "searchFood" (replicate 2 $ mkParam ((facing + 1) `mod` 6))]))
+                  (turn L (call "tryMove_" [mkParam ((facing - 1) `mod` 6), mkParam $ call "searchFood" (mkParam NoTurn:(replicate 2 $ mkParam ((facing - 1) `mod` 6)))]))
+                  (turn R (call "tryMove_" [mkParam ((facing + 1) `mod` 6), mkParam $ call "searchFood" (mkParam NoTurn:(replicate 2 $ mkParam ((facing + 1) `mod` 6)))]))
                   (turn L next)
-                  (turn L (call "tryMove_" [mkParam ((facing - 2) `mod` 6), mkParam $ call "searchFood" (replicate 2 $ mkParam ((facing - 2) `mod` 6))]))
+                  (turn L (call "tryMove_" [mkParam ((facing - 2) `mod` 6), mkParam $ call "searchFood" (mkParam NoTurn:(replicate 2 $ mkParam ((facing - 2) `mod` 6)))]))
                   (turn R next)
-                  (turn R (call "tryMove_" [mkParam ((facing + 2) `mod` 6), mkParam $ call "searchFood" (replicate 2 $ mkParam ((facing + 2) `mod` 6))]))
+                  (turn R (call "tryMove_" [mkParam ((facing + 2) `mod` 6), mkParam $ call "searchFood" (mkParam NoTurn:(replicate 2 $ mkParam ((facing + 2) `mod` 6)))]))
         
 -- | Defines turnN for all legitimate parameters, given the next state
 turnNDef :: AntState -> Code
