@@ -57,7 +57,7 @@ searchFood lastTurn facing dest' = define "searchFood" [mkParam lastTurn, mkPara
     --Only pick up food if not at home
     (sense Here next (call "takeAndGoHome" [mkParam dest]) Home)
     --Sense a path leading to food
-    (sense Here (call "followToFood" [mkParam dest]) next foodPathCond)
+--    (sense Here (call "followToFood" [mkParam dest]) next foodPathCond)
     --If food or path wasn't found, move and leave a mark that leads to home
     (move next (call "searchFood_" [mkParam lastTurn, mkParam facing, mkParam dest]))
     --Only leave a marker if there is no path marker already
@@ -111,11 +111,30 @@ takeAndGoHome facing = define "takeAndGoHome" [mkParam facing] $ combine
     
 searchHomeDef :: Code
 searchHomeDef = combineList ([searchHome facing leaveMark | facing <- [0..5], leaveMark <- [MarkPath, UnmarkPath, DoNothing]] ++ 
-                [turnNDef (call "searchHome" [mkParam facing, mkParam leaveMark]) | facing <- [0..5], leaveMark <- [MarkPath, UnmarkPath, DoNothing]])
+                [turnNDef (call "searchHome" [mkParam facing, mkParam leaveMark]) | facing <- [0..5], leaveMark <- [MarkPath, UnmarkPath, DoNothing]] ++
+                [searchHomePath facing | facing <- [0..5]]) 
 
 data PathInstr = MarkPath | UnmarkPath | DoNothing
     deriving (Show, Eq)
                 
+-- | Follows a path of odd markers, possibly leaving a trail of foodpath markers, given the direction it's facing (should be odd)
+searchHomePath :: Dir -> Code
+searchHomePath facing = define "searchHomePath" [mkParam facing] $ combine
+    --When cleaning a path, let other ants know so they move out of the way, and keep trying to move. Otherwise other ants have priority
+    (move (relative 3) next)
+    (turn L next)
+    (turn L (call "searchHomePath" [mkParam ((facing - 2) `mod` 6)]))
+    --If moving was succesful, sense if at home
+    (sense Ahead (jump "findDropPlace") next Home)
+    --If not at home, sense a path
+    (follow 1 next)
+    (follow 3 next)
+    --If no path is found, keep looking
+    --(follow 5 (call "searchHome" [mkParam facing, mkParam DoNothing]))
+    (follow 5 (call "searchHomePath" [mkParam facing]))
+        where --If the path can be followed, keep leaving marks
+              follow n st = sense Here (call "turnN" [mkParam $ shortestTurn (n - facing), mkParam $ call "searchHome" [mkParam n, mkParam DoNothing]]) st (Marker n)
+
 -- | Follows a path of odd markers, possibly leaving a trail of foodpath markers, given the direction it's facing (should be odd)
 searchHome :: Dir -> PathInstr -> Code
 searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leaveMark] $ combine
@@ -132,13 +151,78 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
     (follow 1 next)
     (follow 3 next)
     --If no path is found, keep looking
-    (follow 5 (call "searchHome" [mkParam facing, mkParam DoNothing]))
+    --(follow 5 (call "searchHome" [mkParam facing, mkParam DoNothing]))
+    (follow 5 next)
+    (turn L this) -- this should never happen
         where --If the path can be followed, keep leaving marks
               follow n st = sense Here (call "turnN" [mkParam $ shortestTurn (n - facing), mkParam $ call "searchHome" [mkParam n, mkParam leaveMark]]) st (Marker n)
               --If moving fails, pick a random direction and try to find another path there, otherwise go to next
+              {-
+               -    1 2
+               -   6 0 3
+               -    5 4
+               -}
               tryMove :: Dir -> Code
               tryMove facing = combine
-                  (move (relative 10) next)
+                  (move (relative 56) next)
+                  (move (relative 55) next)
+                  (move (relative 54) next)
+                  (move (relative 53) next)
+                  (move (relative 52) next)             -- pos 0, dir 0
+                  (toss 2 next (relative 26))
+                  -- 19
+                  (turn L next)                         -- pos 0, dir 0
+                  (move (relative 6) next)              -- pos 0, dir 5
+                    (turn L next)                       -- pos 0, dir 5
+                    (move (relative 3) next)            -- pos 0, dir 4
+                      (turn L next)                     -- pos 0, dir 4
+                      (turn L (relative 9))             -- pos 0, dir 3
+                    (turn L (relative 9))               -- pos 1, dir 4
+                  (turn L next)                         -- pos 2, dir 5
+                  (turn L next)                         -- pos 2, dir 4
+                  (move (relative 6) next)              -- pos 2, dir 3
+                    (turn L next)                       -- pos 2, dir 3
+                    (move (relative 3) next)            -- pos 2, dir 2
+                      (turn L next)                     -- pos 2, dir 2
+                      (turn L (relative 9))             -- pos 2, dir 1
+                    (turn L (relative 9))               -- pos 0, dir 2
+                  (turn L next)                         -- pos 1, dir 3
+                  (turn L next)                         -- pos 1, dir 2
+                  (move (relative 6) next)              -- pos 1, dir 1
+                    (turn L next)                       -- pos 1, dir 1
+                    (move (relative 3) next)            -- pos 1, dir 0
+                      (turn L next)                     -- pos 1, dir 0
+                      (turn L (relative (-15)))         -- pos 1, dir 5
+                    (turn L (relative (-15)))           -- pos 2, dir 0
+                  (turn L next)                         -- pos 0, dir 1
+                  (move (relative 26) (relative (-29))) -- pos 0, dir 0
+                  --
+                  (turn R next)                         -- pos 0, dir 0
+                  (move (relative 6) next)              -- pos 0, dir 1
+                    (turn R next)                       -- pos 0, dir 1
+                    (move (relative 3) next)            -- pos 0, dir 2
+                      (turn R next)                     -- pos 0, dir 2
+                      (turn R (relative 9))             -- pos 0, dir 3
+                    (turn R (relative 9))               -- pos 5, dir 2
+                  (turn R next)                         -- pos 4, dir 1
+                  (turn R next)                         -- pos 4, dir 2
+                  (move (relative 6) next)              -- pos 4, dir 3
+                    (turn R next)                       -- pos 4, dir 3
+                    (move (relative 3) next)            -- pos 4, dir 4
+                      (turn R next)                     -- pos 4, dir 4
+                      (turn R (relative 9))             -- pos 4, dir 5
+                    (turn R (relative 9))               -- pos 0, dir 4
+                  (turn R next)                         -- pos 5, dir 3
+                  (turn R next)                         -- pos 5, dir 4
+                  (move (relative 6) next)              -- pos 5, dir 5
+                    (turn R next)                       -- pos 5, dir 5
+                    (move (relative 3) next)            -- pos 5, dir 0
+                      (turn R next)                     -- pos 5, dir 0
+                      (turn R (relative (-15)))         -- pos 5, dir 1
+                    (turn R (relative (-15)))           -- pos 4, dir 0
+                  (turn R next)                         -- pos 0, dir 5
+                  (move next (relative (-52)))          -- pos 0, dir 0
+{-
                   (toss 2 next (relative 2))
                   (toss 2 (relative 2) (relative 3))
                   (toss 2 (relative 3) (relative 5))
@@ -148,6 +232,7 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
                   (turn L (call "searchHome" [mkParam ((facing - 2) `mod` 6), mkParam DoNothing]))
                   (turn R next)
                   (turn R (call "searchHome" [mkParam ((facing + 2) `mod` 6), mkParam DoNothing]))
+                  -}
 
 {-
  - Find the place to drop food.
@@ -186,38 +271,56 @@ findDropPlace = annotate "findDropPlace" $ combine
     (annotate "startFindDropPlace" (sense Here (jump "getOutOfHome") next Home))
     (turn R next)
     (sense Ahead (relative (-1)) next Home)
-    -- Move beside the home edge until an friend in found
+    -- Move beside the home edge until a friend in found
     (move next (relative 3))
     (annotate "moveToDropPlace" (sense LeftAhead (relative (-1)) next Home))
     (turn L (relative (-2)))
     -- Move around friend
     -- position 1
     (turn R next)
-    tryMove
+    (move (relative 3) next)
+    (move (relative 2) next)
+    (move next (call "searchHomePath" [mkParam 0]))
     -- position 2
     (turn L next)
-    tryMove
+    (move (relative 3) next)
+    (move (relative 2) next)
+    --Turn to the assigned direction
+    (turn R (call "searchHomePath" [mkParam 0]))
     -- position 3
     (turn L next)
     (sense Ahead next (relative 2) Friend) -- not there jet
     (turn R (relative (-3)))
-    tryMove
+    (move (relative 4) next)
+    (move (relative 3) next)
+    --Turn to the assigned direction
+    (turn R next)
+    (turn R (call "searchHomePath" [mkParam 0]))
     -- position 4
     (sense Ahead (relative 3) next Friend)
     (sense Ahead next (jump "moveToDropPlace") Home)
     (turn R (relative (-1)))
     (turn L next)
+    (sense LeftAhead (relative 3) next Friend)
+    (turn R next)
+    (turn R (jump "moveToDropPlace"))
+    (sense RightAhead (relative 3) next Friend)
+    (turn R next)
+    (turn R (jump "moveToDropPlace"))
     --
-    (move next this)
+    (move (relative 5) next)
+    (move (relative 4) next)
+    (move (relative 3) next)
+    (turn R next)
+    (turn R (jump "moveToDropPlace"))
     (dropFood next)
-    (move next this)
+    (move (relative 5) next)
+    (move (relative 4) next)
+    (move (relative 3) next)
+    (turn R next)
+    (turn R (jump "moveToDropPlace"))
     (combineList $ replicate 3 (turn L next))
     (sense Here (jump "guardEntrance''") (jump "guardEntrance''") Friend)
-    where tryMove :: Code
-          tryMove = combine
-           (move (relative 3) next)
-           (move (relative 2) next)
-           (move next (call "searchHome" [mkParam 0, mkParam DoNothing]))
         
     
 -- | Defines followToFood
@@ -339,7 +442,7 @@ defendHome = annotate "defendHome" $ combine
         (sense LeftAhead (relative 23) next (Marker 4))
         -- lock ants at positions 6 and 7.
         (combineList $ replicate 7 (senseMarker))
-        (turn L (jump "start"))
+        (turn L (call "searchFood" [mkParam 4, mkParam 4]))
         (move (call "guardEntrance" [mkParam LeftAhead]) next)     
     )
     -- Ants not at the right border of the home.
@@ -411,7 +514,7 @@ guardEntrance'' = annotate "guardEntrance''" $ combine
     (annotate "makeRoom" (sense Ahead next (jump "attack") Friend))
     (combineList $ replicate 4 (pickUp next next))
     (combineList $ replicate 3 (turn L next))
-    (move (jump "start") (jump "start"))
+    (move (call "searchFood" [mkParam 3, mkParam 2]) (call "searchFood" [mkParam 3, mkParam 2]))
 
 repositionFoodInit :: Code
 repositionFoodInit = annotate "repositionFoodInit" $ combine
