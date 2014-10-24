@@ -29,7 +29,8 @@ main =
                 searchFoodDef
                 repositionFoodInit
                 repositionFood
-                findDropPlace
+                findDropPlaceDef 
+                moveToDropPlaceDef 
                 (guardEntrance RightAhead)
                 (guardEntrance LeftAhead)
                 (guardEntrance' Ahead)
@@ -60,7 +61,7 @@ searchFood lastTurn facing dest' = define "searchFood" [mkParam lastTurn, mkPara
     --Only pick up food if not at home
     (sense Here next (call "takeAndGoHome" [mkParam dest]) Home)
     --Sense a path leading to food
---    (sense Here (call "followToFood" [mkParam dest]) next foodPathCond)
+    (sense Here (call "followToFood" [mkParam dest]) next foodPathCond)
     --If food or path wasn't found, move and leave a mark that leads to home
     (move next (call "searchFood_" [mkParam lastTurn, mkParam facing, mkParam dest]))
     --Only leave a marker if there is no path marker already
@@ -128,7 +129,7 @@ searchHomePath facing = define "searchHomePath" [mkParam facing] $ combine
     (turn L next)
     (turn L (call "searchHomePath" [mkParam ((facing - 2) `mod` 6)]))
     --If moving was succesful, sense if at home
-    (sense Ahead (jump "findDropPlace") next Home)
+    (sense Ahead (call "findDropPlace" [mkParam facing]) next Home)
     --If not at home, sense a path
     (follow 1 next)
     (follow 3 next)
@@ -149,7 +150,7 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
     --When cleaning a path, let other ants know so they move out of the way, and keep trying to move. Otherwise other ants have priority
     (tryMove facing)
     --If moving was succesful, sense if at home
-    (sense Ahead (jump "findDropPlace") next Home)
+    (sense Ahead (call "findDropPlace" [mkParam facing]) next Home)
     --If not at home, sense a path
     (follow 1 next)
     (follow 3 next)
@@ -237,6 +238,11 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
                   (turn R (call "searchHome" [mkParam ((facing + 2) `mod` 6), mkParam DoNothing]))
                   -}
 
+findDropPlaceDef :: Code
+findDropPlaceDef = combineList ([findDropPlace facing | facing <- [0..5]] ++ 
+                    [startFindDropPlace facing | facing <- [0..5]] ++
+                    [moveToDropPlace facing | facing <- [0..5]])
+
 {-
  - Find the place to drop food.
  - - => home tile.
@@ -259,71 +265,137 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
  -   - - - 1 2
  -
  -}
-findDropPlace :: Code
-findDropPlace = annotate "findDropPlace" $ combine
+findDropPlace :: Dir -> Code
+findDropPlace facing = define "findDropPlace" [mkParam facing] $ combine
     -- Check if not already inside home
-    (sense Here next (jump "startFindDropPlace") Home)
-    (annotate "getOutOfHome" (move (relative 4) next))
-    (move (relative 3) next)
-    (move (relative 2) next)
-    (turn L (relative (-3)))
-    (sense Here (relative (-4)) next Home)
-    (sense Ahead (jump "startFindDropPlace") next Home)
-    (turn L (relative (-1)))
+    (sense Here next (call "startFindDropPlace" [mkParam facing]) Home)
+    (move (call "findDropPlace" [mkParam facing]) next) -- getOutOfHome
+    (move (call "findDropPlace" [mkParam facing]) next)
+    (move (call "findDropPlace" [mkParam facing]) next)
+    (turn L next)
+    (turn L (call "findDropPlace" [mkParam ((facing - 1) `mod` 6)]))
+
+startFindDropPlace :: Dir -> Code
+startFindDropPlace facing = define "startFindDropPlace" [mkParam facing] $ combine
     -- Turn to align with the home edge.
-    (annotate "startFindDropPlace" (sense Here (jump "getOutOfHome") next Home))
+    (sense Here (call "findDropPlace" [mkParam facing]) next Home)
+    (sense Ahead (relative 2) next Home)
+    (turn L (call "startFindDropPlace" [mkParam ((facing - 1) `mod` 6)]))
+    (sense Ahead next (call "moveToDropPlace" [mkParam facing]) Home)
     (turn R next)
-    (sense Ahead (relative (-1)) next Home)
+    (sense Ahead next (call "moveToDropPlace" [mkParam ((facing + 1) `mod` 6)]) Home)
+    (turn R (call "moveToDropPlace" [mkParam ((facing + 1) `mod` 6)]))
+
+moveToDropPlace facing = define "moveToDropPlace" [mkParam facing] $ combine
     -- Move beside the home edge until a friend in found
-    (move next (relative 3))
-    (annotate "moveToDropPlace" (sense LeftAhead (relative (-1)) next Home))
-    (turn L (relative (-2)))
-    -- Move around friend
-    -- position 1
+    (sense Ahead (call "moveToDropPlaceP1" [mkParam facing]) next Friend)
+    (move (relative 17) next)
+    (move (relative 16) next)
+    (move (relative 15) next)
+    -- Hit an obstacle, try moving around it.
     (turn R next)
-    (move (relative 3) next)
-    (move (relative 2) next)
-    (move next (call "searchHomePath" [mkParam 0]))
-    -- position 2
+    (move next (call "searchHomePath" [mkParam ((facing + 1) `mod` 6)]))
     (turn L next)
-    (move (relative 3) next)
-    (move (relative 2) next)
-    --Turn to the assigned direction
-    (turn R (call "searchHomePath" [mkParam 0]))
-    -- position 3
+    (move next (call "searchHomePath" [mkParam (facing)]))
     (turn L next)
-    (sense Ahead next (relative 2) Friend) -- not there jet
-    (turn R (relative (-3)))
+    (sense Ahead next (relative 3) Friend)
+    -- Found a friend, this means that the ant is possibly in possition 2.
+    (turn R next)
+    (turn R (call "moveToDropPlaceP2" [mkParam facing]))
+
     (move (relative 4) next)
-    (move (relative 3) next)
-    --Turn to the assigned direction
+    -- keep moving straight when there is no way back.
     (turn R next)
-    (turn R (call "searchHomePath" [mkParam 0]))
-    -- position 4
-    (sense Ahead (relative 3) next Friend)
-    (sense Ahead next (jump "moveToDropPlace") Home)
-    (turn R (relative (-1)))
+    (move next (call "searchHomePath" [mkParam facing]))
+    (turn L (relative (-3)))
+
+    (sense Ahead next (call "searchHomePath" [mkParam ((facing - 1) `mod` 6)]) Home)
+    (turn R (call "moveToDropPlace" [mkParam facing]))
+
+    (sense LeftAhead (call "moveToDropPlace" [mkParam facing]) next Home)
+    (turn L (call "moveToDropPlace" [mkParam ((facing - 1) `mod` 6)]))
+    -- Move around friend
+{-
+ - Find the place to drop food.
+ - - => home tile.
+ - . => not home tile.
+ - G => guard
+ - M => drop place
+ - n => positions 1 - 4
+ -
+ -    - - - . .
+ -   - - - + + .
+ -  - - - + M 4 .
+ -   - - - + + 3 .
+ -    - - - 1 2 .
+ -     - - . . .
+ -
+ -    - - - .
+ -   - - - + +
+ -  - - - + M .
+ -   - - - + + .
+ -    - - - * 3
+ -   - - - 1 2
+ -
+ -}
+moveToDropPlaceDef :: Code
+moveToDropPlaceDef = combineList ([moveToDropPlaceP1 facing | facing <- [0..5]] ++ 
+                    [moveToDropPlaceP2 facing | facing <- [0..5]] ++
+                    [moveToDropPlaceP3 facing | facing <- [0..5]] ++
+                    [moveToDropPlaceP4 facing | facing <- [0..5]])
+    -- position 1
+moveToDropPlaceP1 facing = define "moveToDropPlaceP1" [mkParam facing] $ combine
+    (turn R next)
+    (move (call "moveToDropPlaceP2" [mkParam ((facing + 1) `mod` 6)]) next)
+    (move (call "moveToDropPlaceP2" [mkParam ((facing + 1) `mod` 6)]) next)
+    (move
+        (call "moveToDropPlaceP2" [mkParam ((facing + 1) `mod` 6)])
+        (call "searchHomePath" [mkParam ((facing + 1) `mod` 6)])
+    )
+    -- position 2
+moveToDropPlaceP2 facing = define "moveToDropPlaceP2" [mkParam facing] $ combine
     (turn L next)
-    (sense LeftAhead (relative 3) next Friend)
+    (move (call "moveToDropPlaceP3" [mkParam ((facing - 1) `mod` 6)]) next)
+    (move (call "moveToDropPlaceP3" [mkParam ((facing - 1) `mod` 6)]) next)
+    (move
+        (call "moveToDropPlaceP3" [mkParam ((facing - 1) `mod` 6)])
+        (call "searchHomePath" [mkParam ((facing - 1) `mod` 6)])
+    )
+    -- position 3
+moveToDropPlaceP3 facing = define "moveToDropPlaceP3" [mkParam facing] $ combine
+    (turn L next)
+    (move (call "moveToDropPlaceP4" [mkParam ((facing - 1) `mod` 6)]) next)
+    (move (call "moveToDropPlaceP4" [mkParam ((facing - 1) `mod` 6)]) next)
     (turn R next)
-    (turn R (jump "moveToDropPlace"))
-    (sense RightAhead (relative 3) next Friend)
+    (move next (call "searchHomePath" [mkParam ((facing + 1) `mod` 6)]))
+    (turn L (call "moveToDropPlaceP3" [mkParam (facing)]))
+    {-
+    (move
+        (call "moveToDropPlaceP4" [mkParam ((facing - 1) `mod` 6)])
+        (call "searchHomePath" [mkParam ((facing - 1) `mod` 6)])
+    )
+    -}
+    -- position 4
+moveToDropPlaceP4 facing = define "moveToDropPlaceP4" [mkParam facing] $ combine
+    (sense Ahead next (call "searchHomePath" [mkParam ((facing - 1) `mod` 6)]) Friend)
+    (turn L next)
+    (sense Ahead (relative 3) next (Marker 4))
     (turn R next)
-    (turn R (jump "moveToDropPlace"))
+    (turn R (call "searchHomePath" [mkParam facing]))
     --
     (move (relative 5) next)
     (move (relative 4) next)
     (move (relative 3) next)
     (turn R next)
-    (turn R (jump "moveToDropPlace"))
+    (turn R (call "searchHomePath" [mkParam facing]))
     (dropFood next)
     (move (relative 5) next)
     (move (relative 4) next)
     (move (relative 3) next)
     (turn R next)
-    (turn R (jump "moveToDropPlace"))
-    (combineList $ replicate 3 (turn L next))
-    (sense Here (jump "guardEntrance''") (jump "guardEntrance''") Friend)
+    (turn R (call "searchHomePath" [mkParam facing]))
+    (combineList $ replicate 2 (turn L next))
+    (turn L (jump "guardEntrance''"))
         
     
 -- | Defines followToFood
