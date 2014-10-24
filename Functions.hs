@@ -49,7 +49,6 @@ searchFoodDef = combineList [searchFood turn facing dest | facing <- [0..5], des
 data LastTurn = LeftTurn | RightTurn | NoTurn
     deriving (Eq, Show)
 
---TODO: change direction a bit every now and them
 -- | Searches for food given the dir it's facing (this should be even!) and the (even) dir it should go, and leaves a trail that can be followed home
 searchFood :: LastTurn -> Dir -> Dir -> Code
 searchFood lastTurn facing dest' = define "searchFood" [mkParam lastTurn, mkParam facing, mkParam dest'] $ combine 
@@ -60,7 +59,7 @@ searchFood lastTurn facing dest' = define "searchFood" [mkParam lastTurn, mkPara
     --Only pick up food if not at home
     (sense Here next (call "takeAndGoHome" [mkParam dest]) Home)
     --Sense a path leading to food
---    (sense Here (call "followToFood" [mkParam dest]) next foodPathCond)
+    (sense Here (call "followToFood" [mkParam dest]) next foodPathCond)
     --If food or path wasn't found, move and leave a mark that leads to home
     (move next (call "searchFood_" [mkParam lastTurn, mkParam facing, mkParam dest]))
     --Only leave a marker if there is no path marker already
@@ -114,29 +113,10 @@ takeAndGoHome facing = define "takeAndGoHome" [mkParam facing] $ combine
     
 searchHomeDef :: Code
 searchHomeDef = combineList ([searchHome facing leaveMark | facing <- [0..5], leaveMark <- [MarkPath, UnmarkPath, DoNothing]] ++ 
-                [turnNDef (call "searchHome" [mkParam facing, mkParam leaveMark]) | facing <- [0..5], leaveMark <- [MarkPath, UnmarkPath, DoNothing]] ++
-                [searchHomePath facing | facing <- [0..5]]) 
+                [turnNDef (call "searchHome" [mkParam facing, mkParam leaveMark]) | facing <- [0..5], leaveMark <- [MarkPath, UnmarkPath, DoNothing]]) 
 
 data PathInstr = MarkPath | UnmarkPath | DoNothing
     deriving (Show, Eq)
-                
--- | Follows a path of odd markers, possibly leaving a trail of foodpath markers, given the direction it's facing (should be odd)
-searchHomePath :: Dir -> Code
-searchHomePath facing = define "searchHomePath" [mkParam facing] $ combine
-    --When cleaning a path, let other ants know so they move out of the way, and keep trying to move. Otherwise other ants have priority
-    (move (relative 3) next)
-    (turn L next)
-    (turn L (call "searchHomePath" [mkParam ((facing - 2) `mod` 6)]))
-    --If moving was succesful, sense if at home
-    (sense Ahead (jump "findDropPlace") next Home)
-    --If not at home, sense a path
-    (follow 1 next)
-    (follow 3 next)
-    --If no path is found, keep looking
-    --(follow 5 (call "searchHome" [mkParam facing, mkParam DoNothing]))
-    (follow 5 (call "searchHomePath" [mkParam facing]))
-        where --If the path can be followed, keep leaving marks
-              follow n st = sense Here (call "turnN" [mkParam $ shortestTurn (n - facing), mkParam $ call "searchHome" [mkParam n, mkParam DoNothing]]) st (Marker n)
 
 -- | Follows a path of odd markers, possibly leaving a trail of foodpath markers, given the direction it's facing (should be odd)
 searchHome :: Dir -> PathInstr -> Code
@@ -154,9 +134,7 @@ searchHome facing leaveMark = define "searchHome" [mkParam facing, mkParam leave
     (follow 1 next)
     (follow 3 next)
     --If no path is found, keep looking
-    --(follow 5 (call "searchHome" [mkParam facing, mkParam DoNothing]))
-    (follow 5 next)
-    (turn L this) -- this should never happen
+    (follow 5 (call "searchHome" [mkParam facing, mkParam DoNothing]))
         where --If the path can be followed, keep leaving marks
               follow n st = sense Here (call "turnN" [mkParam $ shortestTurn (n - facing), mkParam $ call "searchHome" [mkParam n, mkParam leaveMark]]) st (Marker n)
               --If moving fails, pick a random direction and try to find another path there, otherwise go to next
@@ -283,13 +261,13 @@ findDropPlace = annotate "findDropPlace" $ combine
     (turn R next)
     (move (relative 3) next)
     (move (relative 2) next)
-    (move next (call "searchHomePath" [mkParam 0]))
+    (move next (call "searchHome" [mkParam 0, mkParam DoNothing]))
     -- position 2
     (turn L next)
     (move (relative 3) next)
     (move (relative 2) next)
     --Turn to the assigned direction
-    (turn R (call "searchHomePath" [mkParam 0]))
+    (turn R (call "searchHome" [mkParam 0, mkParam DoNothing]))
     -- position 3
     (turn L next)
     (sense Ahead next (relative 2) Friend) -- not there jet
@@ -298,7 +276,7 @@ findDropPlace = annotate "findDropPlace" $ combine
     (move (relative 3) next)
     --Turn to the assigned direction
     (turn R next)
-    (turn R (call "searchHomePath" [mkParam 0]))
+    (turn R (call "searchHome" [mkParam 0, mkParam DoNothing]))
     -- position 4
     (sense Ahead (relative 3) next Friend)
     (sense Ahead next (jump "moveToDropPlace") Home)
