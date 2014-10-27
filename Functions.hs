@@ -1,10 +1,13 @@
+{-#LANGUAGE DeriveDataTypeable, ExtendedDefaultRules #-}
 module Functions where
 
 import CodeGenerator
 
+import Data.Typeable
 import Control.Monad
 import Control.Monad.State
 
+default (Int)
 
 type Dir = Int --0 (east) to 5 (north-east), clockwise
 
@@ -34,7 +37,7 @@ main =
                 (guardEntrance LeftAhead)
                 (guardEntrance' Ahead)
                 guardEntrance''
-        writeFile "pathFollowing2.ant" code
+        writeFile "test2.ant" code
         
 -- | Assigns random roles to ants, the list must be length 2 or larger, every antstate in the list has the same chance of being selected
 assignRandom :: [AntState] -> Code
@@ -47,7 +50,7 @@ searchFoodDef :: Code
 searchFoodDef = combineList [searchFood turn facing dest | facing <- [0..5], dest <- [0..5], turn <- [LeftTurn, RightTurn, NoTurn]]
 
 data LastTurn = LeftTurn | RightTurn | NoTurn
-    deriving (Eq, Show)
+    deriving (Eq, Show, Typeable)
 
 -- | Searches for food given the dir it's facing (this should be even!) and the (even) dir it should go, and leaves a trail that can be followed home
 searchFood :: LastTurn -> Dir -> Dir -> Code
@@ -116,7 +119,7 @@ searchHomeDef = combineList ([searchHome facing leaveMark | facing <- [0..5], le
                 [turnNDef (call "searchHome" [mkParam facing, mkParam leaveMark]) | facing <- [0..5], leaveMark <- [MarkPath, UnmarkPath, DoNothing]]) 
 
 data PathInstr = MarkPath | UnmarkPath | DoNothing
-    deriving (Show, Eq)
+    deriving (Show, Eq, Typeable)
 
 -- | Follows a path of odd markers, possibly leaving a trail of foodpath markers, given the direction it's facing (should be odd)
 searchHome :: Dir -> PathInstr -> Code

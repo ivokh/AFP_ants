@@ -1,8 +1,9 @@
-{-#LANGUAGE TypeSynonymInstances, FlexibleInstances, ExistentialQuantification#-}
+{-#LANGUAGE TypeSynonymInstances, FlexibleInstances, ExistentialQuantification, DeriveDataTypeable#-}
 module CodeGenerator (Marker, Instruction(..), Condition(..), SenseDir(..), AntState, MoveDir(..), Code, 
     combine, combineList, runCode, next, this, annotate, define, addLabel, sense, mark, unMark, pickUp, dropFood, turn, move, toss, call, jump, relative, mkParam) where
 
 import Data.Maybe
+import Data.Typeable
 import Control.Applicative
 import Control.Monad.State
 import Control.Monad.Reader
@@ -18,7 +19,7 @@ data Instruction
    | Turn MoveDir Int
    | Move Int Int
    | Flip Int Int Int
- deriving (Show, Eq)
+ deriving (Show, Eq, Typeable)
  
 data Condition = Friend | Foe | FriendWithFood | FoeWithFood | Food | Rock | Marker Marker | FoeMarker | Home | FoeHome 
    deriving (Eq)
@@ -40,7 +41,7 @@ data SenseDir =
     | Ahead
     | LeftAhead
     | RightAhead
-    deriving (Show, Eq)
+    deriving (Show, Eq, Typeable)
     
 data MoveDir = L | R
     deriving Eq
@@ -51,21 +52,21 @@ instance Show MoveDir where
 
 data AntState = Call Function -- Calls a function
                 | Relative Int -- Relative n increases the state pointer by n steps
-    deriving (Show, Eq)
+    deriving (Show, Eq, Typeable)
     
 data Function = Function String [Param]
-    deriving (Show, Eq)
+    deriving (Show, Eq, Typeable)
     
 -- | Data type for parameters
-data Param = forall a . (Eq a, Show a) => Param a
+data Param = forall a . (Eq a, Show a, Typeable a) => Param a
     
 instance Show Param where
-    show (Param x) = show x
+    show (Param x) = show x ++ " :: " ++ show (typeOf x)
     
 instance Eq Param where
-    Param x == Param y = show x == show y
+    Param x == Param y = show x == show y && typeOf x == typeOf y
     
-mkParam :: (Eq a, Show a) => a -> Param
+mkParam :: (Eq a, Show a, Typeable a) => a -> Param
 mkParam = Param
 
 -- | The environement, containing function calls tupled with the row number where they are defined
