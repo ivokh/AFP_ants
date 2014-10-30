@@ -1,0 +1,1230 @@
+Flip 6 1 2
+Sense Ahead 2 39 Friend
+Turn Left 3
+Flip 5 4 5
+Sense Ahead 5 39 Friend
+Turn Left 6
+Flip 4 7 8
+Sense Ahead 8 39 Friend
+Turn Left 9
+Flip 3 10 11
+Sense Ahead 11 39 Friend
+Turn Left 12
+Flip 2 13 14
+Sense Ahead 14 39 Friend
+Turn Left 0
+Sense Here 16 21 FoeHome
+Turn Right 17
+Sense Ahead 16 18 FoeHome
+Sense Ahead 19 20 FoeHome
+Move 18 18
+Turn Left 18
+Sense Ahead 22 25 Food
+Move 23 21
+Sense Here 25 24 Home
+PickUp 31 21
+Flip 3 26 27
+Turn Left 0
+Flip 2 28 29
+Turn Right 0
+Move 0 25
+Sense Here 16 31 FoeHome
+Sense Ahead 32 34 Home
+Move 33 31
+Drop 21
+Flip 3 35 36
+Turn Left 30
+Flip 2 37 38
+Turn Right 30
+Move 30 34
+Sense Here 40 48 Food
+Sense Here 48 41 Home
+PickUp 42 42
+Turn Right 43
+Turn Right 44
+Turn Right 1214
+Turn Right 46
+Turn Right 47
+Turn Right 39
+Move 56 42
+Sense Here 50 51 Home
+Drop 62
+Move 1214 62
+Sense Here 53 54 Home
+Drop 62
+Mark 1 55
+Move 1216 62
+Sense Here 57 65 Food
+Sense Here 65 58 Home
+PickUp 59 59
+Turn Right 60
+Turn Right 61
+Turn Right 49
+Turn Right 63
+Turn Right 64
+Turn Right 56
+Move 73 59
+Sense Here 67 68 Home
+Drop 79
+Move 49 79
+Sense Here 70 71 Home
+Drop 79
+Mark 1 72
+Move 52 79
+Sense Here 74 82 Food
+Sense Here 82 75 Home
+PickUp 76 76
+Turn Right 77
+Turn Right 78
+Turn Right 66
+Turn Right 80
+Turn Right 81
+Turn Right 73
+Move 90 76
+Sense Here 84 85 Home
+Drop 96
+Move 66 96
+Sense Here 87 88 Home
+Drop 96
+Mark 1 89
+Move 69 96
+Sense Here 91 99 Food
+Sense Here 99 92 Home
+PickUp 93 93
+Turn Right 94
+Turn Right 95
+Turn Right 83
+Turn Right 97
+Turn Right 98
+Turn Right 90
+Move 107 93
+Sense Here 101 102 Home
+Drop 113
+Move 83 113
+Sense Here 104 105 Home
+Drop 113
+Mark 1 106
+Move 86 113
+Sense Here 108 116 Food
+Sense Here 116 109 Home
+PickUp 110 110
+Turn Right 111
+Turn Right 112
+Turn Right 100
+Turn Right 114
+Turn Right 115
+Turn Right 107
+Move 124 110
+Sense Here 118 119 Home
+Drop 130
+Move 100 130
+Sense Here 121 122 Home
+Drop 130
+Mark 1 123
+Move 103 130
+Sense Here 125 133 Food
+Sense Here 133 126 Home
+PickUp 127 127
+Turn Right 128
+Turn Right 129
+Turn Right 117
+Turn Right 131
+Turn Right 132
+Turn Right 124
+Move 141 127
+Sense Here 135 136 Home
+Drop 147
+Move 117 147
+Sense Here 138 139 Home
+Drop 147
+Mark 1 140
+Move 120 147
+Sense Here 142 150 Food
+Sense Here 150 143 Home
+PickUp 144 144
+Turn Right 145
+Turn Right 146
+Turn Right 134
+Turn Right 148
+Turn Right 149
+Turn Right 141
+Move 158 144
+Sense Here 152 153 Home
+Drop 164
+Move 134 164
+Sense Here 155 156 Home
+Drop 164
+Mark 1 157
+Move 137 164
+Sense Here 159 167 Food
+Sense Here 167 160 Home
+PickUp 161 161
+Turn Right 162
+Turn Right 163
+Turn Right 151
+Turn Right 165
+Turn Right 166
+Turn Right 158
+Move 175 161
+Sense Here 169 170 Home
+Drop 181
+Move 151 181
+Sense Here 172 173 Home
+Drop 181
+Mark 1 174
+Move 154 181
+Sense Here 176 184 Food
+Sense Here 184 177 Home
+PickUp 178 178
+Turn Right 179
+Turn Right 180
+Turn Right 168
+Turn Right 182
+Turn Right 183
+Turn Right 175
+Move 192 178
+Sense Here 186 187 Home
+Drop 198
+Move 168 198
+Sense Here 189 190 Home
+Drop 198
+Mark 1 191
+Move 171 198
+Sense Here 193 201 Food
+Sense Here 201 194 Home
+PickUp 195 195
+Turn Right 196
+Turn Right 197
+Turn Right 185
+Turn Right 199
+Turn Right 200
+Turn Right 192
+Move 209 195
+Sense Here 203 204 Home
+Drop 215
+Move 185 215
+Sense Here 206 207 Home
+Drop 215
+Mark 1 208
+Move 188 215
+Sense Here 210 218 Food
+Sense Here 218 211 Home
+PickUp 212 212
+Turn Right 213
+Turn Right 214
+Turn Right 202
+Turn Right 216
+Turn Right 217
+Turn Right 209
+Move 226 212
+Sense Here 220 221 Home
+Drop 232
+Move 202 232
+Sense Here 223 224 Home
+Drop 232
+Mark 1 225
+Move 205 232
+Sense Here 227 235 Food
+Sense Here 235 228 Home
+PickUp 229 229
+Turn Right 230
+Turn Right 231
+Turn Right 219
+Turn Right 233
+Turn Right 234
+Turn Right 226
+Move 243 229
+Sense Here 237 238 Home
+Drop 249
+Move 219 249
+Sense Here 240 241 Home
+Drop 249
+Mark 1 242
+Move 222 249
+Sense Here 244 252 Food
+Sense Here 252 245 Home
+PickUp 246 246
+Turn Right 247
+Turn Right 248
+Turn Right 236
+Turn Right 250
+Turn Right 251
+Turn Right 243
+Turn Left 260
+Sense Here 254 255 Home
+Drop 266
+Turn Right 236
+Sense Here 257 258 Home
+Drop 266
+Mark 1 259
+Turn Right 239
+Sense Here 261 269 Food
+Sense Here 269 262 Home
+PickUp 263 263
+Turn Right 264
+Turn Right 265
+Turn Right 253
+Turn Right 267
+Turn Right 268
+Turn Right 260
+Move 277 263
+Sense Here 271 272 Home
+Drop 283
+Move 253 283
+Sense Here 274 275 Home
+Drop 283
+Mark 1 276
+Move 256 283
+Sense Here 278 286 Food
+Sense Here 286 279 Home
+PickUp 280 280
+Turn Right 281
+Turn Right 282
+Turn Right 270
+Turn Right 284
+Turn Right 285
+Turn Right 277
+Move 294 280
+Sense Here 288 289 Home
+Drop 300
+Move 270 300
+Sense Here 291 292 Home
+Drop 300
+Mark 1 293
+Move 273 300
+Sense Here 295 303 Food
+Sense Here 303 296 Home
+PickUp 297 297
+Turn Right 298
+Turn Right 299
+Turn Right 287
+Turn Right 301
+Turn Right 302
+Turn Right 294
+Move 311 297
+Sense Here 305 306 Home
+Drop 317
+Move 287 317
+Sense Here 308 309 Home
+Drop 317
+Mark 1 310
+Move 290 317
+Sense Here 312 320 Food
+Sense Here 320 313 Home
+PickUp 314 314
+Turn Right 315
+Turn Right 316
+Turn Right 304
+Turn Right 318
+Turn Right 319
+Turn Right 311
+Move 328 314
+Sense Here 322 323 Home
+Drop 334
+Move 304 334
+Sense Here 325 326 Home
+Drop 334
+Mark 1 327
+Move 307 334
+Sense Here 329 337 Food
+Sense Here 337 330 Home
+PickUp 331 331
+Turn Right 332
+Turn Right 333
+Turn Right 321
+Turn Right 335
+Turn Right 336
+Turn Right 328
+Move 345 331
+Sense Here 339 340 Home
+Drop 351
+Move 321 351
+Sense Here 342 343 Home
+Drop 351
+Mark 1 344
+Move 324 351
+Sense Here 346 354 Food
+Sense Here 354 347 Home
+PickUp 348 348
+Turn Right 349
+Turn Right 350
+Turn Right 338
+Turn Right 352
+Turn Right 353
+Turn Right 345
+Move 362 348
+Sense Here 356 357 Home
+Drop 368
+Move 338 368
+Sense Here 359 360 Home
+Drop 368
+Mark 1 361
+Move 341 368
+Sense Here 363 371 Food
+Sense Here 371 364 Home
+PickUp 365 365
+Turn Right 366
+Turn Right 367
+Turn Right 355
+Turn Right 369
+Turn Right 370
+Turn Right 362
+Move 379 365
+Sense Here 373 374 Home
+Drop 385
+Move 355 385
+Sense Here 376 377 Home
+Drop 385
+Mark 1 378
+Move 358 385
+Sense Here 380 388 Food
+Sense Here 388 381 Home
+PickUp 382 382
+Turn Right 383
+Turn Right 384
+Turn Right 372
+Turn Right 386
+Turn Right 387
+Turn Right 379
+Move 396 382
+Sense Here 390 391 Home
+Drop 402
+Move 372 402
+Sense Here 393 394 Home
+Drop 402
+Mark 1 395
+Move 375 402
+Sense Here 397 405 Food
+Sense Here 405 398 Home
+PickUp 399 399
+Turn Right 400
+Turn Right 401
+Turn Right 389
+Turn Right 403
+Turn Right 404
+Turn Right 396
+Move 413 399
+Sense Here 407 408 Home
+Drop 419
+Move 389 419
+Sense Here 410 411 Home
+Drop 419
+Mark 1 412
+Move 392 419
+Sense Here 414 422 Food
+Sense Here 422 415 Home
+PickUp 416 416
+Turn Right 417
+Turn Right 418
+Turn Right 406
+Turn Right 420
+Turn Right 421
+Turn Right 413
+Move 430 416
+Sense Here 424 425 Home
+Drop 436
+Move 406 436
+Sense Here 427 428 Home
+Drop 436
+Mark 1 429
+Move 409 436
+Sense Here 431 439 Food
+Sense Here 439 432 Home
+PickUp 433 433
+Turn Right 434
+Turn Right 435
+Turn Right 423
+Turn Right 437
+Turn Right 438
+Turn Right 430
+Move 447 433
+Sense Here 441 442 Home
+Drop 453
+Move 423 453
+Sense Here 444 445 Home
+Drop 453
+Mark 1 446
+Move 426 453
+Sense Here 448 456 Food
+Sense Here 456 449 Home
+PickUp 450 450
+Turn Right 451
+Turn Right 452
+Turn Right 440
+Turn Right 454
+Turn Right 455
+Turn Right 447
+Move 464 450
+Sense Here 458 459 Home
+Drop 470
+Move 440 470
+Sense Here 461 462 Home
+Drop 470
+Mark 1 463
+Move 443 470
+Sense Here 465 473 Food
+Sense Here 473 466 Home
+PickUp 467 467
+Turn Right 468
+Turn Right 469
+Turn Right 457
+Turn Right 471
+Turn Right 472
+Turn Right 464
+Move 481 467
+Sense Here 475 476 Home
+Drop 487
+Move 457 487
+Sense Here 478 479 Home
+Drop 487
+Mark 1 480
+Move 460 487
+Sense Here 482 490 Food
+Sense Here 490 483 Home
+PickUp 484 484
+Turn Right 485
+Turn Right 486
+Turn Right 474
+Turn Right 488
+Turn Right 489
+Turn Right 481
+Move 498 484
+Sense Here 492 493 Home
+Drop 504
+Move 474 504
+Sense Here 495 496 Home
+Drop 504
+Mark 1 497
+Move 477 504
+Sense Here 499 507 Food
+Sense Here 507 500 Home
+PickUp 501 501
+Turn Right 502
+Turn Right 503
+Turn Right 491
+Turn Right 505
+Turn Right 506
+Turn Right 498
+Move 515 501
+Sense Here 509 510 Home
+Drop 521
+Move 491 521
+Sense Here 512 513 Home
+Drop 521
+Mark 1 514
+Move 494 521
+Sense Here 516 524 Food
+Sense Here 524 517 Home
+PickUp 518 518
+Turn Right 519
+Turn Right 520
+Turn Right 508
+Turn Right 522
+Turn Right 523
+Turn Right 515
+Move 532 518
+Sense Here 526 527 Home
+Drop 538
+Move 508 538
+Sense Here 529 530 Home
+Drop 538
+Mark 1 531
+Move 511 538
+Sense Here 533 541 Food
+Sense Here 541 534 Home
+PickUp 535 535
+Turn Right 536
+Turn Right 537
+Turn Right 525
+Turn Right 539
+Turn Right 540
+Turn Right 532
+Move 549 535
+Sense Here 543 544 Home
+Drop 555
+Move 525 555
+Sense Here 546 547 Home
+Drop 555
+Mark 1 548
+Move 528 555
+Sense Here 550 558 Food
+Sense Here 558 551 Home
+PickUp 552 552
+Turn Right 553
+Turn Right 554
+Turn Right 542
+Turn Right 556
+Turn Right 557
+Turn Right 549
+Move 566 552
+Sense Here 560 561 Home
+Drop 572
+Move 542 572
+Sense Here 563 564 Home
+Drop 572
+Mark 1 565
+Move 545 572
+Sense Here 567 575 Food
+Sense Here 575 568 Home
+PickUp 569 569
+Turn Right 570
+Turn Right 571
+Turn Right 559
+Turn Right 573
+Turn Right 574
+Turn Right 566
+Move 583 569
+Sense Here 577 578 Home
+Drop 589
+Move 559 589
+Sense Here 580 581 Home
+Drop 589
+Mark 1 582
+Move 562 589
+Sense Here 584 592 Food
+Sense Here 592 585 Home
+PickUp 586 586
+Turn Right 587
+Turn Right 588
+Turn Right 576
+Turn Right 590
+Turn Right 591
+Turn Right 583
+Turn Left 600
+Sense Here 594 595 Home
+Drop 606
+Turn Right 576
+Sense Here 597 598 Home
+Drop 606
+Mark 1 599
+Turn Right 579
+Sense Here 601 609 Food
+Sense Here 609 602 Home
+PickUp 603 603
+Turn Right 604
+Turn Right 605
+Turn Right 593
+Turn Right 607
+Turn Right 608
+Turn Right 600
+Move 617 603
+Sense Here 611 612 Home
+Drop 623
+Move 593 623
+Sense Here 614 615 Home
+Drop 623
+Mark 1 616
+Move 596 623
+Sense Here 618 626 Food
+Sense Here 626 619 Home
+PickUp 620 620
+Turn Right 621
+Turn Right 622
+Turn Right 610
+Turn Right 624
+Turn Right 625
+Turn Right 617
+Move 634 620
+Sense Here 628 629 Home
+Drop 640
+Move 610 640
+Sense Here 631 632 Home
+Drop 640
+Mark 1 633
+Move 613 640
+Sense Here 635 643 Food
+Sense Here 643 636 Home
+PickUp 637 637
+Turn Right 638
+Turn Right 639
+Turn Right 627
+Turn Right 641
+Turn Right 642
+Turn Right 634
+Move 651 637
+Sense Here 645 646 Home
+Drop 657
+Move 627 657
+Sense Here 648 649 Home
+Drop 657
+Mark 1 650
+Move 630 657
+Sense Here 652 660 Food
+Sense Here 660 653 Home
+PickUp 654 654
+Turn Right 655
+Turn Right 656
+Turn Right 644
+Turn Right 658
+Turn Right 659
+Turn Right 651
+Move 668 654
+Sense Here 662 663 Home
+Drop 674
+Move 644 674
+Sense Here 665 666 Home
+Drop 674
+Mark 1 667
+Move 647 674
+Sense Here 669 677 Food
+Sense Here 677 670 Home
+PickUp 671 671
+Turn Right 672
+Turn Right 673
+Turn Right 661
+Turn Right 675
+Turn Right 676
+Turn Right 668
+Move 685 671
+Sense Here 679 680 Home
+Drop 691
+Move 661 691
+Sense Here 682 683 Home
+Drop 691
+Mark 1 684
+Move 664 691
+Sense Here 686 694 Food
+Sense Here 694 687 Home
+PickUp 688 688
+Turn Right 689
+Turn Right 690
+Turn Right 678
+Turn Right 692
+Turn Right 693
+Turn Right 685
+Move 702 688
+Sense Here 696 697 Home
+Drop 708
+Move 678 708
+Sense Here 699 700 Home
+Drop 708
+Mark 1 701
+Move 681 708
+Sense Here 703 711 Food
+Sense Here 711 704 Home
+PickUp 705 705
+Turn Right 706
+Turn Right 707
+Turn Right 695
+Turn Right 709
+Turn Right 710
+Turn Right 702
+Move 719 705
+Sense Here 713 714 Home
+Drop 725
+Move 695 725
+Sense Here 716 717 Home
+Drop 725
+Mark 1 718
+Move 698 725
+Sense Here 720 728 Food
+Sense Here 728 721 Home
+PickUp 722 722
+Turn Right 723
+Turn Right 724
+Turn Right 712
+Turn Right 726
+Turn Right 727
+Turn Right 719
+Move 736 722
+Sense Here 730 731 Home
+Drop 742
+Move 712 742
+Sense Here 733 734 Home
+Drop 742
+Mark 1 735
+Move 715 742
+Sense Here 737 745 Food
+Sense Here 745 738 Home
+PickUp 739 739
+Turn Right 740
+Turn Right 741
+Turn Right 729
+Turn Right 743
+Turn Right 744
+Turn Right 736
+Move 753 739
+Sense Here 747 748 Home
+Drop 759
+Move 729 759
+Sense Here 750 751 Home
+Drop 759
+Mark 1 752
+Move 732 759
+Sense Here 754 762 Food
+Sense Here 762 755 Home
+PickUp 756 756
+Turn Right 757
+Turn Right 758
+Turn Right 746
+Turn Right 760
+Turn Right 761
+Turn Right 753
+Move 770 756
+Sense Here 764 765 Home
+Drop 776
+Move 746 776
+Sense Here 767 768 Home
+Drop 776
+Mark 1 769
+Move 749 776
+Sense Here 771 779 Food
+Sense Here 779 772 Home
+PickUp 773 773
+Turn Right 774
+Turn Right 775
+Turn Right 763
+Turn Right 777
+Turn Right 778
+Turn Right 770
+Move 787 773
+Sense Here 781 782 Home
+Drop 793
+Move 763 793
+Sense Here 784 785 Home
+Drop 793
+Mark 1 786
+Move 766 793
+Sense Here 788 796 Food
+Sense Here 796 789 Home
+PickUp 790 790
+Turn Right 791
+Turn Right 792
+Turn Right 780
+Turn Right 794
+Turn Right 795
+Turn Right 787
+Move 804 790
+Sense Here 798 799 Home
+Drop 810
+Move 780 810
+Sense Here 801 802 Home
+Drop 810
+Mark 1 803
+Move 783 810
+Sense Here 805 813 Food
+Sense Here 813 806 Home
+PickUp 807 807
+Turn Right 808
+Turn Right 809
+Turn Right 797
+Turn Right 811
+Turn Right 812
+Turn Right 804
+Move 821 807
+Sense Here 815 816 Home
+Drop 827
+Move 797 827
+Sense Here 818 819 Home
+Drop 827
+Mark 1 820
+Move 800 827
+Sense Here 822 830 Food
+Sense Here 830 823 Home
+PickUp 824 824
+Turn Right 825
+Turn Right 826
+Turn Right 814
+Turn Right 828
+Turn Right 829
+Turn Right 821
+Move 838 824
+Sense Here 832 833 Home
+Drop 844
+Move 814 844
+Sense Here 835 836 Home
+Drop 844
+Mark 1 837
+Move 817 844
+Sense Here 839 847 Food
+Sense Here 847 840 Home
+PickUp 841 841
+Turn Right 842
+Turn Right 843
+Turn Right 831
+Turn Right 845
+Turn Right 846
+Turn Right 838
+Move 855 841
+Sense Here 849 850 Home
+Drop 861
+Move 831 861
+Sense Here 852 853 Home
+Drop 861
+Mark 1 854
+Move 834 861
+Sense Here 856 864 Food
+Sense Here 864 857 Home
+PickUp 858 858
+Turn Right 859
+Turn Right 860
+Turn Right 848
+Turn Right 862
+Turn Right 863
+Turn Right 855
+Move 872 858
+Sense Here 866 867 Home
+Drop 878
+Move 848 878
+Sense Here 869 870 Home
+Drop 878
+Mark 1 871
+Move 851 878
+Sense Here 873 881 Food
+Sense Here 881 874 Home
+PickUp 875 875
+Turn Right 876
+Turn Right 877
+Turn Right 865
+Turn Right 879
+Turn Right 880
+Turn Right 872
+Move 889 875
+Sense Here 883 884 Home
+Drop 895
+Move 865 895
+Sense Here 886 887 Home
+Drop 895
+Mark 1 888
+Move 868 895
+Sense Here 890 898 Food
+Sense Here 898 891 Home
+PickUp 892 892
+Turn Right 893
+Turn Right 894
+Turn Right 882
+Turn Right 896
+Turn Right 897
+Turn Right 889
+Move 906 892
+Sense Here 900 901 Home
+Drop 912
+Move 882 912
+Sense Here 903 904 Home
+Drop 912
+Mark 1 905
+Move 885 912
+Sense Here 907 915 Food
+Sense Here 915 908 Home
+PickUp 909 909
+Turn Right 910
+Turn Right 911
+Turn Right 899
+Turn Right 913
+Turn Right 914
+Turn Right 906
+Move 923 909
+Sense Here 917 918 Home
+Drop 929
+Move 899 929
+Sense Here 920 921 Home
+Drop 929
+Mark 1 922
+Move 902 929
+Sense Here 924 932 Food
+Sense Here 932 925 Home
+PickUp 926 926
+Turn Right 927
+Turn Right 928
+Turn Right 916
+Turn Right 930
+Turn Right 931
+Turn Right 923
+Move 940 926
+Sense Here 934 935 Home
+Drop 946
+Move 916 946
+Sense Here 937 938 Home
+Drop 946
+Mark 1 939
+Move 919 946
+Sense Here 941 949 Food
+Sense Here 949 942 Home
+PickUp 943 943
+Turn Right 944
+Turn Right 945
+Turn Right 933
+Turn Right 947
+Turn Right 948
+Turn Right 940
+Move 957 943
+Sense Here 951 952 Home
+Drop 963
+Move 933 963
+Sense Here 954 955 Home
+Drop 963
+Mark 1 956
+Move 936 963
+Sense Here 958 966 Food
+Sense Here 966 959 Home
+PickUp 960 960
+Turn Right 961
+Turn Right 962
+Turn Right 950
+Turn Right 964
+Turn Right 965
+Turn Right 957
+Move 974 960
+Sense Here 968 969 Home
+Drop 980
+Move 950 980
+Sense Here 971 972 Home
+Drop 980
+Mark 1 973
+Move 953 980
+Sense Here 975 983 Food
+Sense Here 983 976 Home
+PickUp 977 977
+Turn Right 978
+Turn Right 979
+Turn Right 967
+Turn Right 981
+Turn Right 982
+Turn Right 974
+Move 991 977
+Sense Here 985 986 Home
+Drop 997
+Move 967 997
+Sense Here 988 989 Home
+Drop 997
+Mark 1 990
+Move 970 997
+Sense Here 992 1000 Food
+Sense Here 1000 993 Home
+PickUp 994 994
+Turn Right 995
+Turn Right 996
+Turn Right 984
+Turn Right 998
+Turn Right 999
+Turn Right 991
+Move 1008 994
+Sense Here 1002 1003 Home
+Drop 1014
+Move 984 1014
+Sense Here 1005 1006 Home
+Drop 1014
+Mark 1 1007
+Move 987 1014
+Sense Here 1009 1017 Food
+Sense Here 1017 1010 Home
+PickUp 1011 1011
+Turn Right 1012
+Turn Right 1013
+Turn Right 1001
+Turn Right 1015
+Turn Right 1016
+Turn Right 1008
+Move 1025 1011
+Sense Here 1019 1020 Home
+Drop 1031
+Move 1001 1031
+Sense Here 1022 1023 Home
+Drop 1031
+Mark 1 1024
+Move 1004 1031
+Sense Here 1026 1034 Food
+Sense Here 1034 1027 Home
+PickUp 1028 1028
+Turn Right 1029
+Turn Right 1030
+Turn Right 1018
+Turn Right 1032
+Turn Right 1033
+Turn Right 1025
+Move 1042 1028
+Sense Here 1036 1037 Home
+Drop 1048
+Move 1018 1048
+Sense Here 1039 1040 Home
+Drop 1048
+Mark 1 1041
+Move 1021 1048
+Sense Here 1043 1051 Food
+Sense Here 1051 1044 Home
+PickUp 1045 1045
+Turn Right 1046
+Turn Right 1047
+Turn Right 1035
+Turn Right 1049
+Turn Right 1050
+Turn Right 1042
+Move 1059 1045
+Sense Here 1053 1054 Home
+Drop 1065
+Move 1035 1065
+Sense Here 1056 1057 Home
+Drop 1065
+Mark 1 1058
+Move 1038 1065
+Sense Here 1060 1068 Food
+Sense Here 1068 1061 Home
+PickUp 1062 1062
+Turn Right 1063
+Turn Right 1064
+Turn Right 1052
+Turn Right 1066
+Turn Right 1067
+Turn Right 1059
+Move 1076 1062
+Sense Here 1070 1071 Home
+Drop 1082
+Move 1052 1082
+Sense Here 1073 1074 Home
+Drop 1082
+Mark 1 1075
+Move 1055 1082
+Sense Here 1077 1085 Food
+Sense Here 1085 1078 Home
+PickUp 1079 1079
+Turn Right 1080
+Turn Right 1081
+Turn Right 1069
+Turn Right 1083
+Turn Right 1084
+Turn Right 1076
+Move 1093 1079
+Sense Here 1087 1088 Home
+Drop 1099
+Move 1069 1099
+Sense Here 1090 1091 Home
+Drop 1099
+Mark 1 1092
+Move 1072 1099
+Sense Here 1094 1102 Food
+Sense Here 1102 1095 Home
+PickUp 1096 1096
+Turn Right 1097
+Turn Right 1098
+Turn Right 1086
+Turn Right 1100
+Turn Right 1101
+Turn Right 1093
+Move 1110 1096
+Sense Here 1104 1105 Home
+Drop 1116
+Move 1086 1116
+Sense Here 1107 1108 Home
+Drop 1116
+Mark 1 1109
+Move 1089 1116
+Sense Here 1111 1119 Food
+Sense Here 1119 1112 Home
+PickUp 1113 1113
+Turn Right 1114
+Turn Right 1115
+Turn Right 1103
+Turn Right 1117
+Turn Right 1118
+Turn Right 1110
+Move 1127 1113
+Sense Here 1121 1122 Home
+Drop 1133
+Move 1103 1133
+Sense Here 1124 1125 Home
+Drop 1133
+Mark 1 1126
+Move 1106 1133
+Sense Here 1128 1136 Food
+Sense Here 1136 1129 Home
+PickUp 1130 1130
+Turn Right 1131
+Turn Right 1132
+Turn Right 1120
+Turn Right 1134
+Turn Right 1135
+Turn Right 1127
+Move 1144 1130
+Sense Here 1138 1139 Home
+Drop 1150
+Move 1120 1150
+Sense Here 1141 1142 Home
+Drop 1150
+Mark 1 1143
+Move 1123 1150
+Sense Here 1145 1153 Food
+Sense Here 1153 1146 Home
+PickUp 1147 1147
+Turn Right 1148
+Turn Right 1149
+Turn Right 1137
+Turn Right 1151
+Turn Right 1152
+Turn Right 1144
+Move 1161 1147
+Sense Here 1155 1156 Home
+Drop 1167
+Move 1137 1167
+Sense Here 1158 1159 Home
+Drop 1167
+Mark 1 1160
+Move 1140 1167
+Sense Here 1162 1170 Food
+Sense Here 1170 1163 Home
+PickUp 1164 1164
+Turn Right 1165
+Turn Right 1166
+Turn Right 1154
+Turn Right 1168
+Turn Right 1169
+Turn Right 1161
+Move 1178 1164
+Sense Here 1172 1173 Home
+Drop 1184
+Move 1154 1184
+Sense Here 1175 1176 Home
+Drop 1184
+Mark 1 1177
+Move 1157 1184
+Sense Here 1179 1187 Food
+Sense Here 1187 1180 Home
+PickUp 1181 1181
+Turn Right 1182
+Turn Right 1183
+Turn Right 1171
+Turn Right 1185
+Turn Right 1186
+Turn Right 1178
+Move 1195 1181
+Sense Here 1189 1190 Home
+Drop 1201
+Move 1171 1201
+Sense Here 1192 1193 Home
+Drop 1201
+Mark 1 1194
+Move 1174 1201
+Sense Here 1196 1204 Food
+Sense Here 1204 1197 Home
+PickUp 1198 1198
+Turn Right 1199
+Turn Right 1200
+Turn Right 1188
+Turn Right 1202
+Turn Right 1203
+Turn Right 1195
+Move 1212 1198
+Sense Here 1206 1207 Home
+Drop 1221
+Move 1188 1221
+Sense Here 1209 1210 Home
+Drop 1221
+Mark 1 1211
+Move 1191 1221
+Sense Ahead 1218 1218 Food
+Move 1188 1201
+Sense Here 1215 1224 Home
+Drop 1224
+Sense Here 1217 1224 Home
+Sense Here 42 42 Home
+Turn Right 1219
+Turn Right 1220
+Turn Right 1213
+Turn Right 1222
+Turn Right 1223
+Turn Right 1212
+Turn Right 1225
+Turn Right 1226
+Turn Right 39
+Turn Right 1228
+Turn Right 1229
+Turn Right 1217
