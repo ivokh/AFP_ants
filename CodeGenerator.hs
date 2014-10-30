@@ -1,4 +1,4 @@
-{-#LANGUAGE TypeSynonymInstances, FlexibleInstances, ExistentialQuantification, DeriveDataTypeable#-}
+{-#LANGUAGE FlexibleInstances, ExistentialQuantification, DeriveDataTypeable#-}
 module CodeGenerator (Marker, Instruction(..), Condition(..), SenseDir(..), AntState, MoveDir(..), Code, 
     combine, combineList, runCode, next, this, annotate, define, addLabel, sense, mark, unMark, pickUp, dropFood, turn, move, toss, call, jump, relative, mkParam) where
 
